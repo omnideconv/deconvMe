@@ -136,6 +136,21 @@
 <span><span class="va">result_multiple</span> <span class="op">&lt;-</span> <span class="fu">methyldeconv</span><span class="fu">::</span><span class="fu"><a href="reference/deconvolute_combined.html">deconvolute_combined</a></span><span class="op">(</span>methyl_set <span class="op">=</span> <span class="va">methyl_set</span>,</span>
 <span>                                                      methods <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'epidish'</span>,<span class="st">'houseman'</span><span class="op">)</span>,</span>
 <span>                                                      array <span class="op">=</span> <span class="st">'450k'</span><span class="op">)</span></span></code></pre></div>
+<p>With methyldeconv you can either get the original result object of each respective method (<code>methyldeconv::run_XXX</code>) or a table with cell-type fractions that has a unified format between methods (<code><a href="reference/deconvolute.html">methyldeconv::deconvolute</a></code>).The unified results can be visualized using the methyldeconv functions <code><a href="reference/results_barplot.html">results_barplot()</a></code> or <code><a href="reference/results_boxplot.html">results_boxplot()</a></code>.</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">methyldeconv</span><span class="fu">::</span><span class="fu"><a href="reference/results_barplot.html">results_barplot</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">methyldeconv</span><span class="fu">::</span><span class="fu"><a href="reference/results_boxplot.html">results_boxplot</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span></code></pre></div>
+<p>Results from a run with more than one method (<code><a href="reference/deconvolute_combined.html">methyldeconv::deconvolute_combined</a></code>) can be easily visualized as well with <code>results_aggregated_boxplot</code>:</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">methyldeconv</span><span class="fu">::</span><span class="fu"><a href="reference/results_aggregated_boxplot.html">results_aggregated_boxplot</a></span><span class="op">(</span><span class="va">result_multiple</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="dependencies">Dependencies<a class="anchor" aria-label="anchor" href="#dependencies"></a>
+</h2>
+<p>A full list of dependencies can be displayed with <code>pak</code>:</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">pak</span><span class="fu">::</span><span class="fu"><a href="https://pak.r-lib.org/reference/pkg_deps_tree.html" class="external-link">pkg_deps_tree</a></span><span class="op">(</span><span class="st">"omnideconv/methyldeconv"</span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="links">
