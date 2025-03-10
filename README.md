@@ -59,3 +59,25 @@ result_multiple <- methyldeconv::deconvolute_combined(methyl_set = methyl_set,
                                                       methods = c('epidish','houseman'),
                                                       array = '450k')
 ```
+
+With methyldeconv you can either get the original result object of each respective method (`methyldeconv::run_XXX`) or a table with cell-type fractions that has a unified format between methods (`methyldeconv::deconvolute`).The unified results can be visualized using the methyldeconv functions `results_barplot()` or `results_boxplot()`.
+
+``` r
+methyldeconv::results_barplot(result)
+
+methyldeconv::results_boxplot(result)
+```
+
+Results from a run with more than one method (`methyldeconv::deconvolute_combined`) can be easily visualized as well with `results_aggregated_boxplot`:
+
+```r
+methyldeconv::results_aggregated_boxplot(result_multiple)
+```
+
+
+## Dependencies
+
+A full list of dependencies can be displayed with `pak`:
+``` r
+pak::pkg_deps_tree("omnideconv/methyldeconv")
+```
