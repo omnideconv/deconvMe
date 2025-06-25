@@ -7,7 +7,9 @@
 
 suppressMessages(library(methyldeconv))
 
-# EpiDISH signature matrix
+# ----------------------
+# EpiDISH tests
+# ----------------------
 
 test_that("get_epidish_signature_matrix returns a data frame with CpGs column", {
   skip_if_not_installed("EpiDISH")
@@ -18,7 +20,20 @@ test_that("get_epidish_signature_matrix returns a data frame with CpGs column", 
   expect_true("CpGs" %in% colnames(sig))
 })
 
-# Houseman signature matrix
+test_that("run_epidish supports cpg_subset argument", {
+  skip_if_not_installed("EpiDISH")
+  sig <- methyldeconv::get_epidish_signature_matrix("blood")
+  subset_cpgs <- sig$CpGs[1:10]
+  beta <- matrix(runif(10 * 3), nrow = 10, ncol = 3)
+  rownames(beta) <- subset_cpgs
+  colnames(beta) <- paste0("Sample", 1:3)
+  res <- methyldeconv::run_epidish(beta, reference = "blood", cpg_subset = subset_cpgs)
+  expect_true(all(rownames(res$dataREF) %in% subset_cpgs))
+})
+
+# ----------------------
+# Houseman tests
+# ----------------------
 
 test_that("get_houseman_signature_matrix returns a data frame with CpGs column", {
   skip_if_not_installed("FlowSorted.Blood.EPIC")
@@ -29,7 +44,20 @@ test_that("get_houseman_signature_matrix returns a data frame with CpGs column",
   expect_true("CpGs" %in% colnames(sig))
 })
 
-# MethAtlas signature matrix
+test_that("run_houseman supports cpg_subset argument", {
+  skip_if_not_installed("FlowSorted.Blood.EPIC")
+  skip_if_not_installed("minfiData")
+  skip_if_not_installed("minfi")
+  sig <- methyldeconv::get_houseman_signature_matrix()
+  subset_cpgs <- sig$CpGs[1:10]
+  methyl_set <- minfiData::MsetEx
+  res <- methyldeconv::run_houseman(methyl_set, cpg_subset = subset_cpgs)
+  expect_true(is.data.frame(res$prop) || is.matrix(res$prop))
+})
+
+# ----------------------
+# MethAtlas tests
+# ----------------------
 
 test_that("get_methatlas_signature_matrix returns a data frame with expected structure", {
   ref_path <- system.file("reference_atlas.csv", package = "methyldeconv")
@@ -40,7 +68,22 @@ test_that("get_methatlas_signature_matrix returns a data frame with expected str
   expect_true("CpGs" %in% colnames(sig))
 })
 
-# MethylResolver signature matrix
+test_that("run_methatlas supports cpg_subset argument", {
+  ref_path <- system.file("reference_atlas.csv", package = "methyldeconv")
+  sig <- methyldeconv::get_methatlas_signature_matrix(ref_path)
+  subset_cpgs <- sig$CpGs[1:10]
+  beta <- matrix(runif(10 * 3), nrow = 10, ncol = 3)
+  rownames(beta) <- subset_cpgs
+  colnames(beta) <- paste0("Sample", 1:3)
+  expect_error(
+    methyldeconv::run_methatlas(beta, reference_atlas = ref_path, cpg_subset = subset_cpgs),
+    NA
+  )
+})
+
+# ----------------------
+# MethylResolver tests
+# ----------------------
 
 test_that("get_methylresolver_signature_matrix returns a data frame with CpGs column", {
   skip_if_not_installed("MethylResolver")
@@ -51,7 +94,22 @@ test_that("get_methylresolver_signature_matrix returns a data frame with CpGs co
   expect_true("CpGs" %in% colnames(sig))
 })
 
-# MethylCC signature matrix
+test_that("run_methylresolver supports cpg_subset argument", {
+  skip_if_not_installed("MethylResolver")
+  sig <- methyldeconv::get_methylresolver_signature_matrix()
+  n_celltypes <- ncol(sig) - 1 # exclude CpGs column
+  n_cpgs <- max(25, 2 * n_celltypes)
+  subset_cpgs <- sig$CpGs[1:n_cpgs]
+  beta <- matrix(runif(n_cpgs * 3), nrow = n_cpgs, ncol = 3)
+  rownames(beta) <- subset_cpgs
+  colnames(beta) <- paste0("Sample", 1:3)
+  res <- methyldeconv::run_methylresolver(beta, cpg_subset = subset_cpgs, alpha = 0.7)
+  expect_true(is.list(res) || is.data.frame(res))
+})
+
+# ----------------------
+# MethylCC tests
+# ----------------------
 
 test_that("get_methylcc_signature_matrix returns a data frame with region columns", {
   skip_if_not_installed("FlowSorted.Blood.450k")

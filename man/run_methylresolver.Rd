@@ -11,7 +11,8 @@ run_methylresolver(
   alpha = seq(0.5, 0.9, by = 0.05),
   absolute = TRUE,
   purityModel = MethylResolver::RFmodel,
-  seed = 1
+  seed = 1,
+  cpg_subset = NULL
 )
 }
 \arguments{
@@ -28,6 +29,8 @@ run_methylresolver(
 \item{purityModel}{Random Forest model to predict mixture purity (unknown content) which allows the calculation of absolute cell type fractions. Required if absolute is TRUE. Default is our RF model trained on the consensus purity estimate (CPE) using TCGA data.}
 
 \item{seed}{fixed seed to account for RNG influences}
+
+\item{cpg_subset}{Optional character vector of CpGs to subset the signature matrix. Default: NULL (use all CpGs in the signature).}
 }
 \description{
 Run MethylResolver

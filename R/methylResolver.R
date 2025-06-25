@@ -7,11 +7,12 @@
 #' @param absolute Whether to compute tumor purity and absolute cell type fractions. Default is TRUE. 
 #' @param purityModel Random Forest model to predict mixture purity (unknown content) which allows the calculation of absolute cell type fractions. Required if absolute is TRUE. Default is our RF model trained on the consensus purity estimate (CPE) using TCGA data.  
 #' @param seed fixed seed to account for RNG influences
+#' @param cpg_subset Optional character vector of CpGs to subset the signature matrix. Default: NULL (use all CpGs in the signature).
 #'
 #' @export
 #'
 run_methylresolver <- function(beta_matrix, doPar = F, numCores = 1, alpha = seq(0.5,0.9,by = 0.05),
-                               absolute = TRUE, purityModel = MethylResolver::RFmodel, seed = 1){
+                               absolute = TRUE, purityModel = MethylResolver::RFmodel, seed = 1, cpg_subset = NULL){
   
   set.seed(seed)
   
@@ -22,8 +23,13 @@ run_methylresolver <- function(beta_matrix, doPar = F, numCores = 1, alpha = seq
             immediate. = TRUE)
   }
   
+  sig <- MethylResolver::MethylSig
+  if (!is.null(cpg_subset)) {
+    sig <- sig[rownames(sig) %in% cpg_subset, , drop = FALSE]
+  }
+  
   result_methylresolver <- MethylResolver::MethylResolver(methylMix = beta_matrix, 
-                                                          methylSig = MethylResolver::MethylSig, 
+                                                          methylSig = sig, 
                                                           betaPrime = FALSE,
                                                           doPar = doPar, 
                                                           numCores = numCores, 

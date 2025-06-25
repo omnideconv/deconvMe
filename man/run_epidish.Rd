@@ -10,7 +10,8 @@ run_epidish(
   reference = c("blood", "breast", "epithelial"),
   maxit = 50,
   nu.v = c(0.25, 0.5, 0.7),
-  constraint = c("inequality", "equality")
+  constraint = c("inequality", "equality"),
+  cpg_subset = NULL
 )
 }
 \arguments{
@@ -36,6 +37,8 @@ will be automatically returned.}
 normalization constraint. The default is 'inequality' (i.e sum of weights
 adds to a number less or equal than 1), which was implemented in
 Houseman et al (2012).}
+
+\item{cpg_subset}{Optional character vector of CpGs to subset the signature matrix. Default: NULL (use all CpGs in the signature).}
 }
 \value{
 CP-mode

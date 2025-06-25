@@ -13,6 +13,7 @@
 #' @param verbose Should the function be verbose?
 #' @param lessThanOne Should the predictions be constrained to exactly one, in minfi default is FALSE, now you can select the option
 #' @param cellCounts If cell counts are available (CBC, of flow sort) add a vector of lenght equal to the samples being deconvolved
+#' @param cpg_subset Optional character vector of CpGs to subset the signature matrix. Default: NULL (use all CpGs in the signature).
 #' @param ... Other arguments for preprocessQuantile or other normalizations
 #'
 #' @import FlowSorted.Blood.450k
@@ -23,7 +24,7 @@ run_houseman <- function(methyl_set, array = c('450k','EPIC'),
                                 compositeCellType=c('Blood','CordBloodCombined','CordBlood','CordBloodNorway','CordTissueAndBlood','DLPFC'),
                                 processMethod = 'preprocessQuantile', probeSelect = c('IDOL','both','any'), cellTypes =c('CD8T','CD4T','NK','Bcell','Mono','Neu'),
                                 referencePlatform = c('IlluminaHumanMethylationEPIC','IlluminaHumanMethylation450k','IlluminaHumanMethylation27k'),
-                                referenceset = NULL, CustomCpGs = NULL, meanPlot = FALSE, verbose = TRUE, lessThanOne = FALSE, cellCounts = NULL, ...){
+                                referenceset = NULL, CustomCpGs = NULL, meanPlot = FALSE, verbose = TRUE, lessThanOne = FALSE, cellCounts = NULL, cpg_subset = NULL, ...){
 
   check_input_mset(methyl_set)
   options(matrixStats.useNames.NA = "deprecated")
@@ -52,6 +53,11 @@ run_houseman <- function(methyl_set, array = c('450k','EPIC'),
   }else if(array == 'EPIC'){
     minfi::`annotation`(methyl_set) <- c('array'='IlluminaHumanMethylationEPIC',
                                          'annotation'='ilm10b4.hg19')
+  }
+
+  # Use cpg_subset if provided, else CustomCpGs
+  if (!is.null(cpg_subset)) {
+    CustomCpGs <- cpg_subset
   }
 
   result_fsb <- FlowSorted.Blood.EPIC::estimateCellCounts2(rgSet = methyl_set,

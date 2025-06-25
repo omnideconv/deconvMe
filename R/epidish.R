@@ -17,6 +17,7 @@
 #' normalization constraint. The default is 'inequality' (i.e sum of weights 
 #' adds to a number less or equal than 1), which was implemented in 
 #' Houseman et al (2012).
+#' @param cpg_subset Optional character vector of CpGs to subset the signature matrix. Default: NULL (use all CpGs in the signature).
 #'
 #' @return CP-mode
 #' A list with the following entries: estF: a matrix of the estimated fractions; 
@@ -41,7 +42,8 @@ run_epidish <- function(beta_matrix,
                         mode=c('RPC', 'CBS', 'CP'), 
                         reference=c('blood','breast','epithelial'), 
                         maxit = 50, nu.v = c(0.25, 0.5, 0.7), 
-                        constraint = c("inequality", "equality")){
+                        constraint = c("inequality", "equality"),
+                        cpg_subset = NULL){
   
   beta_matrix <- check_input_beta(beta_matrix)
 
@@ -55,26 +57,20 @@ run_epidish <- function(beta_matrix,
   }
   message(paste0("Starting EpiDISH deconvolution with mode ", mode, " ..."))
 
-  result_epidish <- switch (reference,
-    'blood' = EpiDISH::epidish(beta.m = beta_matrix,
-                               ref.m = EpiDISH::centDHSbloodDMC.m,
-                               method = mode,
-                               maxit = maxit,
-                               nu.v = nu.v,
-                               constraint = constraint),
-    'breast' = EpiDISH::epidish(beta.m = beta_matrix,
-                                ref.m = EpiDISH::centEpiFibFatIC.m,
-                                method = mode,
-                                maxit = maxit,
-                                nu.v = nu.v,
-                                constraint = constraint),
-    'epithelial' = EpiDISH::epidish(beta.m = beta_matrix,
-                                    ref.m = EpiDISH::centEpiFibIC.m,
-                                    method = mode,
-                                    maxit = maxit,
-                                    nu.v = nu.v,
-                                    constraint = constraint)
+  ref_mat <- switch(reference,
+    'blood' = EpiDISH::centDHSbloodDMC.m,
+    'breast' = EpiDISH::centEpiFibFatIC.m,
+    'epithelial' = EpiDISH::centEpiFibIC.m
   )
+  if (!is.null(cpg_subset)) {
+    ref_mat <- ref_mat[rownames(ref_mat) %in% cpg_subset, , drop = FALSE]
+  }
+  result_epidish <- EpiDISH::epidish(beta.m = beta_matrix,
+                                     ref.m = ref_mat,
+                                     method = mode,
+                                     maxit = maxit,
+                                     nu.v = nu.v,
+                                     constraint = constraint)
 
   return(result_epidish)
 }
