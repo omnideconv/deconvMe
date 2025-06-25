@@ -26,7 +26,7 @@ pak::pkg_install("omnideconv/methyldeconv")
 
 methyldeconv can be applied directly to a methylSet from the minfi package, or you can apply each method separately on a beta matrix with Illumina CpG IDs.
 
-Both cases are demonstrated below using example data from minfi:
+Below, we demonstrate how to use the EpiDISH method with example data from minfi:
 
 ```{r}
 library(methyldeconv)
@@ -40,13 +40,6 @@ beta_matrix <- minfi::getBeta(ratio_set)
 
 # run EpiDISH for deconvolution of example data
 result <- methyldeconv::deconvolute(methyl_set = methyl_set, method = 'epidish')
-
-result_raw <- methyldeconv::run_epidish(beta_matrix = beta_matrix, mode='RPC')
-
-# you can also run multiple methods at the same time and get their results + aggregated results:
-result_multiple <- methyldeconv::deconvolute_combined(methyl_set = methyl_set,
-                                                      methods = c('epidish','houseman'),
-                                                      array = '450k')
 ```
 
 ## Viewing the Results
