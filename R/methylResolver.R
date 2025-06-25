@@ -41,3 +41,13 @@ run_methylresolver <- function(beta_matrix, doPar = F, numCores = 1, alpha = seq
               result_absolute=result_absolute,
               result_purity=result_purity))
 }
+
+#' Get MethylResolver Signature Matrix
+#'
+#' Returns the signature matrix used by MethylResolver.
+#' @return Signature matrix as tibble with CpGs in rows (column 'CpGs') and cell types in columns
+#' @export
+get_methylresolver_signature_matrix <- function() {
+  as.data.frame(MethylResolver::MethylSig) |> 
+    tibble::rownames_to_column("CpGs")
+}

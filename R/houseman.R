@@ -69,3 +69,13 @@ run_houseman <- function(methyl_set, array = c('450k','EPIC'),
   
   return(result_fsb)
 }
+
+#' Get Houseman Signature Matrix
+#'
+#' Returns the IDOLOptimizedCpGs.compTable (signature matrix) used by Houseman for a given array type..
+#' @return Signature matrix as tibble with CpGs in rows (column 'CpGs') and cell types in columns
+#' @export
+get_houseman_signature_matrix <- function() {
+  as.data.frame(FlowSorted.Blood.EPIC::IDOLOptimizedCpGs.compTable) |> 
+    tibble::rownames_to_column("CpGs")
+}

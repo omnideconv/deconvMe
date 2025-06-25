@@ -79,4 +79,19 @@ run_epidish <- function(beta_matrix,
   return(result_epidish)
 }
 
+#' Get EpiDISH Signature Matrix
+#'
+#' Returns the reference matrix used by EpiDISH for a given type.
+#' @param reference One of 'blood', 'breast', 'epithelial'.
+#' @return Signature matrix as tibble with CpGs in rows (column 'CpGs') and cell types in columns
+#' @export
+get_epidish_signature_matrix <- function(reference = c('blood', 'breast', 'epithelial')) {
+  reference <- match.arg(reference)
+  as.data.frame(switch(reference,
+    'blood' = EpiDISH::centDHSbloodDMC.m,
+    'breast' = EpiDISH::centEpiFibFatIC.m,
+    'epithelial' = EpiDISH::centEpiFibIC.m
+  )) |> tibble::rownames_to_column("CpGs")
+}
+
 
