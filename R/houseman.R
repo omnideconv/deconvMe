@@ -13,6 +13,7 @@
 #' @param verbose Should the function be verbose?
 #' @param lessThanOne Should the predictions be constrained to exactly one, in minfi default is FALSE, now you can select the option
 #' @param cellCounts If cell counts are available (CBC, of flow sort) add a vector of lenght equal to the samples being deconvolved
+#' @param cpg_subset Optional character vector of CpGs to subset the signature matrix. Default: NULL (use all CpGs in the signature).
 #' @param ... Other arguments for preprocessQuantile or other normalizations
 #'
 #' @import FlowSorted.Blood.450k
@@ -23,7 +24,7 @@ run_houseman <- function(methyl_set, array = c('450k','EPIC'),
                                 compositeCellType=c('Blood','CordBloodCombined','CordBlood','CordBloodNorway','CordTissueAndBlood','DLPFC'),
                                 processMethod = 'preprocessQuantile', probeSelect = c('IDOL','both','any'), cellTypes =c('CD8T','CD4T','NK','Bcell','Mono','Neu'),
                                 referencePlatform = c('IlluminaHumanMethylationEPIC','IlluminaHumanMethylation450k','IlluminaHumanMethylation27k'),
-                                referenceset = NULL, CustomCpGs = NULL, meanPlot = FALSE, verbose = TRUE, lessThanOne = FALSE, cellCounts = NULL, ...){
+                                referenceset = NULL, CustomCpGs = NULL, meanPlot = FALSE, verbose = TRUE, lessThanOne = FALSE, cellCounts = NULL, cpg_subset = NULL, ...){
 
   check_input_mset(methyl_set)
   options(matrixStats.useNames.NA = "deprecated")
@@ -54,6 +55,11 @@ run_houseman <- function(methyl_set, array = c('450k','EPIC'),
                                          'annotation'='ilm10b4.hg19')
   }
 
+  # Use cpg_subset if provided, else CustomCpGs
+  if (!is.null(cpg_subset)) {
+    CustomCpGs <- cpg_subset
+  }
+
   result_fsb <- FlowSorted.Blood.EPIC::estimateCellCounts2(rgSet = methyl_set,
                                                            compositeCellType = compositeCellType,
                                                            processMethod = processMethod, 
@@ -68,4 +74,14 @@ run_houseman <- function(methyl_set, array = c('450k','EPIC'),
                                                            cellcounts = cellCounts, ...)
   
   return(result_fsb)
+}
+
+#' Get Houseman Signature Matrix
+#'
+#' Returns the IDOLOptimizedCpGs.compTable (signature matrix) used by Houseman for a given array type..
+#' @return Signature matrix as tibble with CpGs in rows (column 'CpGs') and cell types in columns
+#' @export
+get_houseman_signature_matrix <- function() {
+  as.data.frame(FlowSorted.Blood.EPIC::IDOLOptimizedCpGs.compTable) |> 
+    tibble::rownames_to_column("CpGs")
 }

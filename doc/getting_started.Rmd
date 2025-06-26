@@ -1,0 +1,66 @@
+---
+title: "Getting Started with methyldeconv"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Getting Started with methyldeconv}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+# Getting Started with methyldeconv
+
+Welcome to **methyldeconv**! This vignette will help you get up and running with cell-type deconvolution for DNA methylation data using the package's unified interface and included methods.
+
+## Installation
+
+You can install methyldeconv from GitHub using the [pak](https://github.com/r-lib/pak) package manager:
+
+```r
+# install the `pak` package manager
+install.packages("pak")
+
+pak::pkg_install("omnideconv/methyldeconv")
+```
+
+## Example Usage
+
+methyldeconv can be applied directly to a methylSet from the minfi package, or you can apply each method separately on a beta matrix with Illumina CpG IDs.
+
+Both cases are demonstrated below using example data from minfi:
+
+```r
+library(methyldeconv)
+library(minfi)
+library(minfiData)
+
+# use example data from Minfi
+methyl_set <- minfiData::MsetEx
+ratio_set <- minfi::ratioConvert(methyl_set)
+beta_matrix <- minfi::getBeta(ratio_set)
+
+# run EpiDISH for deconvolution of example data
+result <- methyldeconv::deconvolute(methyl_set = methyl_set, method = 'epidish')
+
+result_raw <- methyldeconv::run_epidish(beta_matrix = beta_matrix, mode='RPC')
+
+# you can also run multiple methods at the same time and get their results + aggregated results:
+result_multiple <- methyldeconv::deconvolute_combined(methyl_set = methyl_set,
+                                                      methods = c('epidish','houseman'),
+                                                      array = '450k')
+```
+
+With methyldeconv you can either get the original result object of each respective method (`methyldeconv::run_XXX`) or a table with cell-type fractions that has a unified format between methods (`methyldeconv::deconvolute`). The unified results can be visualized using the methyldeconv functions `results_barplot()` or `results_boxplot()`.
+
+```r
+methyldeconv::results_barplot(result)
+
+methyldeconv::results_boxplot(result)
+```
+
+Results from a run with more than one method (`methyldeconv::deconvolute_combined`) can be easily visualized as well with `results_aggregated_boxplot`:
+
+```r
+methyldeconv::results_aggregated_boxplot(result_multiple)
+```
+
+For more details, see the package documentation and other vignettes! 

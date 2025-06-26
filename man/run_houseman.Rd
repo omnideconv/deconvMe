@@ -20,6 +20,7 @@ run_houseman(
   verbose = TRUE,
   lessThanOne = FALSE,
   cellCounts = NULL,
+  cpg_subset = NULL,
   ...
 )
 }
@@ -49,6 +50,8 @@ run_houseman(
 \item{lessThanOne}{Should the predictions be constrained to exactly one, in minfi default is FALSE, now you can select the option}
 
 \item{cellCounts}{If cell counts are available (CBC, of flow sort) add a vector of lenght equal to the samples being deconvolved}
+
+\item{cpg_subset}{Optional character vector of CpGs to subset the signature matrix. Default: NULL (use all CpGs in the signature).}
 
 \item{...}{Other arguments for preprocessQuantile or other normalizations}
 }

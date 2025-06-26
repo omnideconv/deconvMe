@@ -9,7 +9,8 @@ run_methatlas(
   reference_atlas = system.file("reference_atlas.csv", package = "methyldeconv"),
   temp_dir = NULL,
   out_dir = NULL,
-  use_epic_reference = FALSE
+  use_epic_reference = FALSE,
+  cpg_subset = NULL
 )
 }
 \arguments{
@@ -23,6 +24,8 @@ The default (tissue-wide) reference file is stored in 'inst/reference_atlas.csv'
 \item{out_dir}{Path to output directory. Output will be a csv file and a png representing the cell type fractions.}
 
 \item{use_epic_reference}{The MethAtlas has a whole-tissue reference or a immunecell-specific reference that is optimized for EPIC arrays (which is a subset of the whole-tissue reference)}
+
+\item{cpg_subset}{Optional character vector of CpGs to subset the signature matrix. Default: NULL (use all CpGs in the signature).}
 }
 \description{
 run MethAtlas

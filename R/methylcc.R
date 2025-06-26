@@ -72,3 +72,16 @@ run_methylcc <- function(methyl_set, array = c('450k','EPIC'),
   
   return(result_methylCC)
 }
+
+#' Get MethylCC Signature Matrix (DMRs)
+#'
+#' Runs find_dmrs on the default reference and returns the DMRs.
+#' @return DMRs as dataframe (as used by methylCC)
+#' @export
+get_methylcc_signature_matrix <- function() {
+  dmr_list <- methylCC:::.find_dmrs()
+  signature_dmrs <- dmr_list$regions_all
+
+  data.frame(signature_dmrs)
+
+}

@@ -1,0 +1,70 @@
+---
+title: "Contribute: Adding a New Method to methyldeconv"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Contribute: Adding a New Method to methyldeconv}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+# Contributing a New Method to methyldeconv
+
+Thank you for your interest in contributing to **methyldeconv**! This guide will help you add a new cell-type deconvolution method to the package.
+
+## 1. Fork and Clone the Repository
+
+- Fork the [methyldeconv GitHub repository](https://github.com/omnideconv/methyldeconv).
+- Clone your fork locally and create a new branch for your feature.
+
+## 2. Add Your Method Implementation
+
+- Add a new R script for your method in the `R/` directory (e.g., `mynewmethod.R`).
+- Follow the structure of existing methods (see files like `epidish.R`, `houseman.R`, etc.).
+- Your function should:
+    - Accept a beta matrix or methylSet as input.
+    - Return results in a format consistent with other methods (see `run_epidish`, `run_houseman`, etc.).
+    - Include roxygen2 documentation.
+
+## 3. Register Your Method
+
+- If your method should be accessible via the unified interface (`deconvolute` or `deconvolute_combined`), update the relevant logic in `main.R`.
+- Add your method to the list of supported methods and document any new parameters.
+
+## 4. Expose All Method Parameters via methyldeconv
+
+To ensure users can fully utilize your new method, make sure that all relevant parameters of your function are accessible through the main methyldeconv interfaces (`deconvolute` and/or `deconvolute_combined`).
+
+- Update the argument handling in `main.R` so that users can pass any method-specific parameters when calling these functions.
+- Clearly document these parameters in your function's roxygen2 documentation and in the main interface documentation if needed.
+- This approach ensures flexibility and makes your method as useful as possible for a wide range of use cases.
+
+## 5. Document Your Method
+
+- Add a roxygen2 documentation block to your function.
+- Run `devtools::document()` to update the manual files in `man/`.
+- Optionally, add an example to the README or a new vignette.
+
+## 6. Add Tests
+
+- Add tests for your method in `tests/testthat/` (see `test_methods.R` for examples).
+- Ensure your method is covered by the test suite.
+
+## 7. Check and Build
+
+- Run `devtools::check()` to ensure your changes pass all checks.
+- Build the documentation site locally with `pkgdown::build_site()` to preview your changes.
+
+## 8. Submit a Pull Request
+
+- Push your branch to your fork and open a pull request against the main repository.
+- Describe your changes and reference any related issues.
+
+## 9. Code Review
+
+- Address any feedback or requested changes from the maintainers.
+
+---
+
+For more details, see the [pkgdown documentation](https://pkgdown.r-lib.org/) and the [R packages book](https://r-pkgs.org/).
+
+If you have questions, feel free to open an issue or ask for help in your pull request! 
