@@ -102,13 +102,10 @@ result_custom_epidish <- run_epidish(beta_matrix, cpg_subset = custom_cpgs)
 
 You can compare the deconvolution results obtained using the custom CpGs to those obtained using the full EpiDISH signature matrix:
 
-```{r, fig.height=4, fig.width=8}
+```{r, fig.height=4, fig.width=8, message=FALSE, warning=FALSE}
 # Run EpiDISH with the full signature
 result_full_epidish <- run_epidish(beta_matrix)
 
-# Compare the first few rows of each result
-head(result_custom_epidish)
-head(result_full_epidish)
 
 # Optionally, visualize the differences (e.g., for the first sample) using tidyverse
 if (requireNamespace("tidyr", quietly = TRUE) && requireNamespace("dplyr", quietly = TRUE) && requireNamespace("ggplot2", quietly = TRUE)) {
