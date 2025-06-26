@@ -31,7 +31,7 @@ library(methyldeconv)
 
 ## EpiDISH
 
-```{r}
+```{r, message=FALSE, warning=FALSE}
 # Get the blood signature matrix used by EpiDISH
 sig_epidish <- get_epidish_signature_matrix(reference = "blood")
 head(sig_epidish)
@@ -39,7 +39,7 @@ head(sig_epidish)
 
 ## Houseman
 
-```{r}
+```{r, message=FALSE, warning=FALSE}
 # Get the Houseman signature matrix
 sig_houseman <- get_houseman_signature_matrix()
 head(sig_houseman)
@@ -47,7 +47,7 @@ head(sig_houseman)
 
 ## MethylCC
 
-```{r}
+```{r, message=FALSE, warning=FALSE}
 # Get the DMRs (signature matrix) used by MethylCC
 sig_methylcc <- get_methylcc_signature_matrix()
 head(sig_methylcc)
@@ -55,7 +55,7 @@ head(sig_methylcc)
 
 ## MethylResolver
 
-```{r}
+```{r, message=FALSE, warning=FALSE}
 # Get the signature matrix used by MethylResolver
 sig_methylresolver <- get_methylresolver_signature_matrix()
 head(sig_methylresolver)
@@ -63,50 +63,71 @@ head(sig_methylresolver)
 
 ## MethAtlas
 
-```{r}
+```{r, message=FALSE, warning=FALSE}
 # Get the default reference matrix used by MethAtlas
 sig_methatlas <- get_methatlas_signature_matrix()
 head(sig_methatlas)
 ```
 
-# Using User-Specified CpGs for Deconvolution
+## Prepare Example Data
 
-You can specify a custom set of CpGs to use for deconvolution in most methods. This is done by providing a character vector of CpG IDs to the `cpg_subset` (or similar) argument.
-
-## Example: Running EpiDISH with Custom CpGs
-
-```{r}
-# Example: select the first 100 CpGs from the signature matrix
-custom_cpgs <- sig_epidish$CpGs[1:100]
-
-# Assume you have a beta matrix (see getting_started vignette for details)
+```{r, message=FALSE, warning=FALSE}
 library(minfiData)
 methyl_set <- minfiData::MsetEx
 beta_matrix <- minfi::getBeta(minfi::ratioConvert(methyl_set))
-
-# Run EpiDISH with custom CpGs
-result_custom <- run_epidish(beta_matrix, cpg_subset = custom_cpgs)
 ```
 
-## Example: Running Houseman with Custom CpGs
+# Example: Using Custom CpGs from EpiDISH and Houseman signatures
+
+When using custom CpGs for deconvolution, it is important to ensure that the CpGs you select are present in the signature matrix for the method you are using. Here, we demonstrate this feature for EpiDISH and Houseman, as their signature matrices may have some overlap. For other methods, custom CpG support is available, but the overlap with EpiDISH/Houseman signatures may be zero, so we do not show those examples here.
 
 ```{r}
-# Use the same custom CpGs
-result_houseman_custom <- run_houseman(methyl_set, cpg_subset = custom_cpgs)
+# Get CpGs from each method's signature matrix
+cpgs_epidish <- sig_epidish$CpGs
+cpgs_houseman <- sig_houseman$CpGs
+
+# Example: intersection of CpGs between EpiDISH and Houseman
+custom_cpgs <- intersect(cpgs_epidish, cpgs_houseman)
+length(custom_cpgs)
 ```
 
-## Example: Running MethAtlas with Custom CpGs
+## Example: Running EpiDISH with Custom CpGs
 
-```{r}
-# Run MethAtlas with custom CpGs
-result_methatlas_custom <- run_methatlas(beta_matrix, cpg_subset = custom_cpgs)
+```{r, message=FALSE, warning=FALSE}
+# Use the method-specific subset
+result_custom_epidish <- run_epidish(beta_matrix, cpg_subset = custom_cpgs)
 ```
 
-## Example: Running MethylResolver with Custom CpGs
+## Comparing Results: Custom CpGs vs Full Signature
 
-```{r}
-# Run MethylResolver with custom CpGs
-result_methylresolver_custom <- run_methylresolver(beta_matrix, cpg_subset = custom_cpgs)
+You can compare the deconvolution results obtained using the custom CpGs to those obtained using the full EpiDISH signature matrix:
+
+```{r, fig.height=4, fig.width=8}
+# Run EpiDISH with the full signature
+result_full_epidish <- run_epidish(beta_matrix)
+
+# Compare the first few rows of each result
+head(result_custom_epidish)
+head(result_full_epidish)
+
+# Optionally, visualize the differences (e.g., for the first sample) using tidyverse
+if (requireNamespace("tidyr", quietly = TRUE) && requireNamespace("dplyr", quietly = TRUE) && requireNamespace("ggplot2", quietly = TRUE)) {
+  library(dplyr)
+  library(tidyr)
+  library(ggplot2)
+  df_compare <- tibble(
+    CellType = colnames(result_full_epidish$estF),
+    Full = as.numeric(result_full_epidish$estF[1,]),
+    Custom = as.numeric(result_custom_epidish$estF[1, colnames(result_custom_epidish$estF)])
+  ) %>%
+    pivot_longer(cols = c(Full, Custom), names_to = "Signature", values_to = "Fraction")
+  
+  ggplot(df_compare, aes(x = CellType, y = Fraction, fill = Signature)) +
+    geom_bar(stat = "identity", position = "dodge") +
+    labs(title = "EpiDISH: Full vs Custom CpGs (Sample 1)", y = "Estimated Fraction") +
+    scale_fill_manual(values = c("Full" = "bisque", "Custom" = "darkgreen"))+
+    theme_minimal()
+}
 ```
 
 ---

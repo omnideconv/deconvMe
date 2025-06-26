@@ -15,7 +15,7 @@ methyldeconv provides several functions to visualize the results of cell-type de
 
 We'll use example data from the `minfi` and `minfiData` packages:
 
-```{r}
+```{r, message=FALSE, warning=FALSE}
 library(methyldeconv)
 library(minfi)
 library(minfiData)
@@ -28,7 +28,7 @@ beta_matrix <- minfi::getBeta(ratio_set)
 # Run deconvolution
 result <- methyldeconv::deconvolute(methyl_set = methyl_set, method = 'epidish')
 result_multiple <- methyldeconv::deconvolute_combined(methyl_set = methyl_set,
-                                                      methods = c('epidish','houseman'),
+                                                      methods = c('epidish','methylcc'),
                                                       array = '450k')
 ```
 
