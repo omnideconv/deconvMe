@@ -1,0 +1,114 @@
+---
+title: "Signature Matrices and Custom CpGs in methyldeconv"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Signature Matrices and Custom CpGs in methyldeconv}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+# Background: What Are Signature Matrices?
+
+Cell-type deconvolution methods rely on *signature matrices* (also called reference matrices or basis matrices) to estimate the proportions of different cell types in a heterogeneous DNA methylation sample. A signature matrix is a table where each row corresponds to a CpG site (or region), and each column corresponds to a cell type. The entries represent the expected methylation value (often as beta values) for each CpG in each pure cell type.
+
+Signature matrices are typically constructed from reference datasets where DNA methylation has been measured in sorted or purified cell populations. The choice of CpGs and the quality of the reference data are critical for accurate deconvolution. Different methods use different strategies for selecting CpGs and constructing their signature matrices:
+
+- **EpiDISH** uses reference matrices for blood, breast, or epithelial cell types, based on published datasets.
+- **Houseman** uses optimized sets of CpGs (e.g., IDOL-optimized) for blood and other tissues.
+- **MethylCC** uses differentially methylated regions (DMRs) identified from reference data.
+- **MethylResolver** uses a signature matrix derived from large-scale reference data, optimized for robust deconvolution.
+- **MethAtlas** uses a comprehensive reference atlas, with options for tissue-wide or immune-specific signatures.
+
+The accuracy of cell-type deconvolution depends heavily on how well the signature matrix represents the true methylation profiles of the cell types present in your samples. In some cases, you may want to use a custom set of CpGs (for example, to focus on a subset relevant to your study or to match the coverage of your data).
+
+# Accessing Signature Matrices
+
+methyldeconv provides functions to access the signature matrices used by each deconvolution method. These matrices define the reference methylation profiles for each cell type.
+
+```{r, message=FALSE, warning=FALSE}
+library(methyldeconv)
+```
+
+## EpiDISH
+
+```{r}
+# Get the blood signature matrix used by EpiDISH
+sig_epidish <- get_epidish_signature_matrix(reference = "blood")
+head(sig_epidish)
+```
+
+## Houseman
+
+```{r}
+# Get the Houseman signature matrix
+sig_houseman <- get_houseman_signature_matrix()
+head(sig_houseman)
+```
+
+## MethylCC
+
+```{r}
+# Get the DMRs (signature matrix) used by MethylCC
+sig_methylcc <- get_methylcc_signature_matrix()
+head(sig_methylcc)
+```
+
+## MethylResolver
+
+```{r}
+# Get the signature matrix used by MethylResolver
+sig_methylresolver <- get_methylresolver_signature_matrix()
+head(sig_methylresolver)
+```
+
+## MethAtlas
+
+```{r}
+# Get the default reference matrix used by MethAtlas
+sig_methatlas <- get_methatlas_signature_matrix()
+head(sig_methatlas)
+```
+
+# Using User-Specified CpGs for Deconvolution
+
+You can specify a custom set of CpGs to use for deconvolution in most methods. This is done by providing a character vector of CpG IDs to the `cpg_subset` (or similar) argument.
+
+## Example: Running EpiDISH with Custom CpGs
+
+```{r}
+# Example: select the first 100 CpGs from the signature matrix
+custom_cpgs <- sig_epidish$CpGs[1:100]
+
+# Assume you have a beta matrix (see getting_started vignette for details)
+library(minfiData)
+methyl_set <- minfiData::MsetEx
+beta_matrix <- minfi::getBeta(minfi::ratioConvert(methyl_set))
+
+# Run EpiDISH with custom CpGs
+result_custom <- run_epidish(beta_matrix, cpg_subset = custom_cpgs)
+```
+
+## Example: Running Houseman with Custom CpGs
+
+```{r}
+# Use the same custom CpGs
+result_houseman_custom <- run_houseman(methyl_set, cpg_subset = custom_cpgs)
+```
+
+## Example: Running MethAtlas with Custom CpGs
+
+```{r}
+# Run MethAtlas with custom CpGs
+result_methatlas_custom <- run_methatlas(beta_matrix, cpg_subset = custom_cpgs)
+```
+
+## Example: Running MethylResolver with Custom CpGs
+
+```{r}
+# Run MethylResolver with custom CpGs
+result_methylresolver_custom <- run_methylresolver(beta_matrix, cpg_subset = custom_cpgs)
+```
+
+---
+
+For more details on the available arguments and customization options, see the function documentation or the source code in the `R/` directory. 

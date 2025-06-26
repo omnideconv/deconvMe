@@ -57,7 +57,19 @@ run_houseman <- function(methyl_set, array = c('450k','EPIC'),
 
   # Use cpg_subset if provided, else CustomCpGs
   if (!is.null(cpg_subset)) {
-    CustomCpGs <- cpg_subset
+    sig <- rownames(FlowSorted.Blood.EPIC::IDOLOptimizedCpGs.compTable)
+    overlap <- intersect(cpg_subset, sig)
+    missing <- setdiff(cpg_subset, sig)
+    if (length(overlap) == 0) {
+      stop("None of the specified cpg_subset CpGs are present in the Houseman signature matrix.")
+    }
+    if (length(missing) > 0) {
+      msg <- paste0("Warning: The following CpGs are not present in the Houseman signature matrix and will be ignored: ",
+        paste(head(missing, 10), collapse=", "))
+      if (length(missing) > 10) msg <- paste0(msg, ", ...")
+      warning(msg)
+    }
+    CustomCpGs <- overlap
   }
 
   result_fsb <- FlowSorted.Blood.EPIC::estimateCellCounts2(rgSet = methyl_set,
