@@ -2,3 +2,30 @@ url: http://omnideconv.org/methylDeconv/
 template:
   bootstrap: 5
 
+articles:
+  - title: "Getting Started"
+    contents:
+      - getting_started
+      - visualization
+  - title: "Contributing"
+    contents:
+      - contribute
+
+navbar:
+  structure:
+    left:
+      - home
+      - reference
+      - articles
+      - news
+  components:
+    articles:
+      text: "Articles"
+      menu:
+        - text: "Getting Started"
+          href: articles/getting_started.html
+        - text: "Visualization"
+          href: articles/visualization.html
+        - text: "Contribute"
+          href: articles/contribute.html
+

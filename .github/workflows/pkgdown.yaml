@@ -34,6 +34,11 @@ jobs:
         with:
           extra-packages: any::pkgdown, local::.
           needs: website
+          
+      - name: Manually install newer version of preprocessCore
+        run: |
+          Rscript -e "pak::pkg_install('BiocManager')"
+          Rscript -e "BiocManager::install('preprocessCore', configure.args = c(preprocessCore = '--disable-threading'), force= TRUE, update=TRUE, type = 'source')"
 
       - name: Build site
         run: pkgdown::build_site_github_pages(new_process = FALSE, install = FALSE)
