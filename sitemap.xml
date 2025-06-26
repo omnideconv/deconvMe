@@ -11,6 +11,11 @@
 <url><loc>http://omnideconv.org/methylDeconv/reference/deconvolute.html</loc></url>
 <url><loc>http://omnideconv.org/methylDeconv/reference/deconvolute_combined.html</loc></url>
 <url><loc>http://omnideconv.org/methylDeconv/reference/deconvolution_methods.html</loc></url>
+<url><loc>http://omnideconv.org/methylDeconv/reference/get_epidish_signature_matrix.html</loc></url>
+<url><loc>http://omnideconv.org/methylDeconv/reference/get_houseman_signature_matrix.html</loc></url>
+<url><loc>http://omnideconv.org/methylDeconv/reference/get_methatlas_signature_matrix.html</loc></url>
+<url><loc>http://omnideconv.org/methylDeconv/reference/get_methylcc_signature_matrix.html</loc></url>
+<url><loc>http://omnideconv.org/methylDeconv/reference/get_methylresolver_signature_matrix.html</loc></url>
 <url><loc>http://omnideconv.org/methylDeconv/reference/index.html</loc></url>
 <url><loc>http://omnideconv.org/methylDeconv/reference/init_python.html</loc></url>
 <url><loc>http://omnideconv.org/methylDeconv/reference/methyldeconvstartup.html</loc></url>

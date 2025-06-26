@@ -55,6 +55,7 @@
 <span>  verbose <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  lessThanOne <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  cellCounts <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  cpg_subset <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -113,6 +114,10 @@
 
 <dt id="arg-cellcounts">cellCounts<a class="anchor" aria-label="anchor" href="#arg-cellcounts"></a></dt>
 <dd><p>If cell counts are available (CBC, of flow sort) add a vector of lenght equal to the samples being deconvolved</p></dd>
+
+
+<dt id="arg-cpg-subset">cpg_subset<a class="anchor" aria-label="anchor" href="#arg-cpg-subset"></a></dt>
+<dd><p>Optional character vector of CpGs to subset the signature matrix. Default: NULL (use all CpGs in the signature).</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>

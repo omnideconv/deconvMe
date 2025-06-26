@@ -45,7 +45,8 @@
 <span>  reference <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"blood"</span>, <span class="st">"breast"</span>, <span class="st">"epithelial"</span><span class="op">)</span>,</span>
 <span>  maxit <span class="op">=</span> <span class="fl">50</span>,</span>
 <span>  nu.v <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.25</span>, <span class="fl">0.5</span>, <span class="fl">0.7</span><span class="op">)</span>,</span>
-<span>  constraint <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"inequality"</span>, <span class="st">"equality"</span><span class="op">)</span></span>
+<span>  constraint <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"inequality"</span>, <span class="st">"equality"</span><span class="op">)</span>,</span>
+<span>  cpg_subset <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -86,6 +87,10 @@ will be automatically returned.</p></dd>
 normalization constraint. The default is 'inequality' (i.e sum of weights
 adds to a number less or equal than 1), which was implemented in
 Houseman et al (2012).</p></dd>
+
+
+<dt id="arg-cpg-subset">cpg_subset<a class="anchor" aria-label="anchor" href="#arg-cpg-subset"></a></dt>
+<dd><p>Optional character vector of CpGs to subset the signature matrix. Default: NULL (use all CpGs in the signature).</p></dd>
 
 </dl></div>
     <div class="section level2">

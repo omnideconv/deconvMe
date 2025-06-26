@@ -46,7 +46,8 @@
 <span>  alpha <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0.5</span>, <span class="fl">0.9</span>, by <span class="op">=</span> <span class="fl">0.05</span><span class="op">)</span>,</span>
 <span>  absolute <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  purityModel <span class="op">=</span> <span class="fu">MethylResolver</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/MethylResolver/man/RFmodel.html" class="external-link">RFmodel</a></span>,</span>
-<span>  seed <span class="op">=</span> <span class="fl">1</span></span>
+<span>  seed <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  cpg_subset <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -80,6 +81,10 @@
 
 <dt id="arg-seed">seed<a class="anchor" aria-label="anchor" href="#arg-seed"></a></dt>
 <dd><p>fixed seed to account for RNG influences</p></dd>
+
+
+<dt id="arg-cpg-subset">cpg_subset<a class="anchor" aria-label="anchor" href="#arg-cpg-subset"></a></dt>
+<dd><p>Optional character vector of CpGs to subset the signature matrix. Default: NULL (use all CpGs in the signature).</p></dd>
 
 </dl></div>
 
