@@ -4,8 +4,9 @@ pkgdown_sha: ~
 articles:
   contribute: contribute.html
   getting_started: getting_started.html
+  signatures: signatures.html
   visualization: visualization.html
-last_built: 2025-06-26T07:47Z
+last_built: 2025-06-27T09:59Z
 urls:
   reference: http://omnideconv.org/methylDeconv/reference
   article: http://omnideconv.org/methylDeconv/articles
