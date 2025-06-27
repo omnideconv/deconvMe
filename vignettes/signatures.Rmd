@@ -1,0 +1,132 @@
+---
+title: "Signature Matrices and Custom CpGs in methyldeconv"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Signature Matrices and Custom CpGs in methyldeconv}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+# Background: What Are Signature Matrices?
+
+Cell-type deconvolution methods rely on *signature matrices* (also called reference matrices or basis matrices) to estimate the proportions of different cell types in a heterogeneous DNA methylation sample. A signature matrix is a table where each row corresponds to a CpG site (or region), and each column corresponds to a cell type. The entries represent the expected methylation value (often as beta values) for each CpG in each pure cell type.
+
+Signature matrices are typically constructed from reference datasets where DNA methylation has been measured in sorted or purified cell populations. The choice of CpGs and the quality of the reference data are critical for accurate deconvolution. Different methods use different strategies for selecting CpGs and constructing their signature matrices:
+
+- **EpiDISH** uses reference matrices for blood, breast, or epithelial cell types, based on published datasets.
+- **Houseman** uses optimized sets of CpGs (e.g., IDOL-optimized) for blood and other tissues.
+- **MethylCC** uses differentially methylated regions (DMRs) identified from reference data.
+- **MethylResolver** uses a signature matrix derived from large-scale reference data, optimized for robust deconvolution.
+- **MethAtlas** uses a comprehensive reference atlas, with options for tissue-wide or immune-specific signatures.
+
+The accuracy of cell-type deconvolution depends heavily on how well the signature matrix represents the true methylation profiles of the cell types present in your samples. In some cases, you may want to use a custom set of CpGs (for example, to focus on a subset relevant to your study or to match the coverage of your data).
+
+# Accessing Signature Matrices
+
+methyldeconv provides functions to access the signature matrices used by each deconvolution method. These matrices define the reference methylation profiles for each cell type.
+
+```{r, message=FALSE, warning=FALSE}
+library(methyldeconv)
+```
+
+## EpiDISH
+
+```{r, message=FALSE, warning=FALSE}
+# Get the blood signature matrix used by EpiDISH
+sig_epidish <- get_epidish_signature_matrix(reference = "blood")
+head(sig_epidish)
+```
+
+## Houseman
+
+```{r, message=FALSE, warning=FALSE}
+# Get the Houseman signature matrix
+sig_houseman <- get_houseman_signature_matrix()
+head(sig_houseman)
+```
+
+## MethylCC
+
+```{r, message=FALSE, warning=FALSE}
+# Get the DMRs (signature matrix) used by MethylCC
+sig_methylcc <- get_methylcc_signature_matrix()
+head(sig_methylcc)
+```
+
+## MethylResolver
+
+```{r, message=FALSE, warning=FALSE}
+# Get the signature matrix used by MethylResolver
+sig_methylresolver <- get_methylresolver_signature_matrix()
+head(sig_methylresolver)
+```
+
+## MethAtlas
+
+```{r, message=FALSE, warning=FALSE}
+# Get the default reference matrix used by MethAtlas
+sig_methatlas <- get_methatlas_signature_matrix()
+head(sig_methatlas)
+```
+
+## Prepare Example Data
+
+```{r, message=FALSE, warning=FALSE}
+library(minfiData)
+methyl_set <- minfiData::MsetEx
+beta_matrix <- minfi::getBeta(minfi::ratioConvert(methyl_set))
+```
+
+# Example: Using Custom CpGs from EpiDISH and Houseman signatures
+
+When using custom CpGs for deconvolution, it is important to ensure that the CpGs you select are present in the signature matrix for the method you are using. Here, we demonstrate this feature for EpiDISH and Houseman, as their signature matrices may have some overlap. For other methods, custom CpG support is available, but the overlap with EpiDISH/Houseman signatures may be zero, so we do not show those examples here.
+
+```{r}
+# Get CpGs from each method's signature matrix
+cpgs_epidish <- sig_epidish$CpGs
+cpgs_houseman <- sig_houseman$CpGs
+
+# Example: intersection of CpGs between EpiDISH and Houseman
+custom_cpgs <- intersect(cpgs_epidish, cpgs_houseman)
+length(custom_cpgs)
+```
+
+## Example: Running EpiDISH with Custom CpGs
+
+```{r, message=FALSE, warning=FALSE}
+# Use the method-specific subset
+result_custom_epidish <- run_epidish(beta_matrix, cpg_subset = custom_cpgs)
+```
+
+## Comparing Results: Custom CpGs vs Full Signature
+
+You can compare the deconvolution results obtained using the custom CpGs to those obtained using the full EpiDISH signature matrix:
+
+```{r, fig.height=4, fig.width=8, message=FALSE, warning=FALSE}
+# Run EpiDISH with the full signature
+result_full_epidish <- run_epidish(beta_matrix)
+
+
+# Optionally, visualize the differences (e.g., for the first sample) using tidyverse
+if (requireNamespace("tidyr", quietly = TRUE) && requireNamespace("dplyr", quietly = TRUE) && requireNamespace("ggplot2", quietly = TRUE)) {
+  library(dplyr)
+  library(tidyr)
+  library(ggplot2)
+  df_compare <- tibble(
+    CellType = colnames(result_full_epidish$estF),
+    Full = as.numeric(result_full_epidish$estF[1,]),
+    Custom = as.numeric(result_custom_epidish$estF[1, colnames(result_custom_epidish$estF)])
+  ) %>%
+    pivot_longer(cols = c(Full, Custom), names_to = "Signature", values_to = "Fraction")
+  
+  ggplot(df_compare, aes(x = CellType, y = Fraction, fill = Signature)) +
+    geom_bar(stat = "identity", position = "dodge") +
+    labs(title = "EpiDISH: Full vs Custom CpGs (Sample 1)", y = "Estimated Fraction") +
+    scale_fill_manual(values = c("Full" = "bisque", "Custom" = "darkgreen"))+
+    theme_minimal()
+}
+```
+
+---
+
+For more details on the available arguments and customization options, see the function documentation or the source code in the `R/` directory. 

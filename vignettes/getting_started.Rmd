@@ -28,7 +28,7 @@ methyldeconv can be applied directly to a methylSet from the minfi package, or y
 
 Below, we demonstrate how to use the EpiDISH method with example data from minfi:
 
-```{r}
+```{r, message=FALSE, warning=FALSE}
 library(methyldeconv)
 library(minfi)
 library(minfiData)

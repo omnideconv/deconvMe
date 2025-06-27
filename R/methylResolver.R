@@ -25,7 +25,18 @@ run_methylresolver <- function(beta_matrix, doPar = F, numCores = 1, alpha = seq
   
   sig <- MethylResolver::MethylSig
   if (!is.null(cpg_subset)) {
-    sig <- sig[rownames(sig) %in% cpg_subset, , drop = FALSE]
+    overlap <- intersect(cpg_subset, rownames(sig))
+    missing <- setdiff(cpg_subset, rownames(sig))
+    if (length(overlap) == 0) {
+      stop("None of the specified cpg_subset CpGs are present in the MethylResolver signature matrix.")
+    }
+    if (length(missing) > 0) {
+      msg <- paste0("Warning: The following CpGs are not present in the MethylResolver signature matrix and will be ignored: ",
+        paste(head(missing, 10), collapse=", "))
+      if (length(missing) > 10) msg <- paste0(msg, ", ...")
+      warning(msg)
+    }
+    sig <- sig[rownames(sig) %in% overlap, , drop = FALSE]
   }
   
   result_methylresolver <- MethylResolver::MethylResolver(methylMix = beta_matrix, 

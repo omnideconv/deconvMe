@@ -2,13 +2,27 @@
 % Please edit documentation in R/visualization.R
 \name{results_boxplot}
 \alias{results_boxplot}
-\title{Function to plot the results from \code{deconvolute()}  as boxplots for each celltype}
+\title{Function to plot deconvolution results as boxplots for each cell type}
 \usage{
 results_boxplot(result)
 }
 \arguments{
-\item{result}{result from \code{deconvolute()}}
+\item{result}{A data frame containing deconvolution results. Rows must correspond to samples, columns to cell types. Row names must be sample identifiers. The data frame can originate from \code{deconvolute()}, or from any external deconvolution method, as long as it matches this structure.}
 }
 \description{
-Function to plot the results from \code{deconvolute()}  as boxplots for each celltype
+Function to plot deconvolution results as boxplots for each cell type
+}
+\details{
+The input data frame must:
+\itemize{
+\item Have samples as rows and cell types as columns
+\item Have row names set to sample identifiers
+\item Contain only numeric values (cell type fractions or proportions)
+}
+
+Example of a valid input:\tabular{llll}{
+   SampleID \tab CellTypeA \tab CellTypeB \tab CellTypeC \cr
+   Sample1 \tab 0.2 \tab 0.5 \tab 0.3 \cr
+   Sample2 \tab 0.1 \tab 0.7 \tab 0.2 \cr
+}
 }

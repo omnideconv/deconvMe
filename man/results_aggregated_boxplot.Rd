@@ -2,13 +2,31 @@
 % Please edit documentation in R/visualization.R
 \name{results_aggregated_boxplot}
 \alias{results_aggregated_boxplot}
-\title{Function to plot the results from \code{deconvolute_combined()} as boxplots for each celltype and celltype}
+\title{Function to plot aggregated deconvolution results as boxplots for each cell type and method}
 \usage{
 results_aggregated_boxplot(result)
 }
 \arguments{
-\item{result}{result from \code{deconvolute_combined()}}
+\item{result}{A data frame containing aggregated deconvolution results. Must have columns: 'sample', 'celltype', 'value', and 'method'. This can originate from \code{deconvolute_combined()} or any external source, as long as the structure matches.}
 }
 \description{
-Function to plot the results from \code{deconvolute_combined()} as boxplots for each celltype and celltype
+Function to plot aggregated deconvolution results as boxplots for each cell type and method
+}
+\details{
+The input data frame must:
+\itemize{
+\item Contain columns: 'sample', 'celltype', 'value', and 'method'
+\item 'sample': sample identifier (character)
+\item 'celltype': cell type name (character)
+\item 'value': cell type fraction or proportion (numeric)
+\item 'method': deconvolution method name (character)
+}
+
+Example of a valid input:\tabular{llll}{
+   sample \tab celltype \tab value \tab method \cr
+   Sample1 \tab A \tab 0.2 \tab method1 \cr
+   Sample1 \tab B \tab 0.5 \tab method1 \cr
+   Sample2 \tab A \tab 0.1 \tab method2 \cr
+   Sample2 \tab B \tab 0.7 \tab method2 \cr
+}
 }

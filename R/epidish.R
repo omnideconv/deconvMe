@@ -63,7 +63,18 @@ run_epidish <- function(beta_matrix,
     'epithelial' = EpiDISH::centEpiFibIC.m
   )
   if (!is.null(cpg_subset)) {
-    ref_mat <- ref_mat[rownames(ref_mat) %in% cpg_subset, , drop = FALSE]
+    overlap <- intersect(cpg_subset, rownames(ref_mat))
+    missing <- setdiff(cpg_subset, rownames(ref_mat))
+    if (length(overlap) == 0) {
+      stop("None of the specified cpg_subset CpGs are present in the reference matrix.")
+    }
+    if (length(missing) > 0) {
+      msg <- paste0("Warning: The following CpGs are not present in the reference matrix and will be ignored: ",
+        paste(head(missing, 10), collapse=", "))
+      if (length(missing) > 10) msg <- paste0(msg, ", ...")
+      warning(msg)
+    }
+    ref_mat <- ref_mat[rownames(ref_mat) %in% overlap, , drop = FALSE]
   }
   result_epidish <- EpiDISH::epidish(beta.m = beta_matrix,
                                      ref.m = ref_mat,

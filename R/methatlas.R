@@ -41,7 +41,18 @@ run_methatlas <- function(beta_matrix, reference_atlas = system.file("reference_
   
   ref_df <- read.csv(reference_atlas, check.names = FALSE)
   if (!is.null(cpg_subset)) {
-    ref_df <- ref_df[ref_df$CpGs %in% cpg_subset, , drop = FALSE]
+    overlap <- intersect(cpg_subset, ref_df$CpGs)
+    missing <- setdiff(cpg_subset, ref_df$CpGs)
+    if (length(overlap) == 0) {
+      stop("None of the specified cpg_subset CpGs are present in the reference atlas.")
+    }
+    if (length(missing) > 0) {
+      msg <- paste0("Warning: The following CpGs are not present in the reference atlas and will be ignored: ",
+        paste(head(missing, 10), collapse=", "))
+      if (length(missing) > 10) msg <- paste0(msg, ", ...")
+      warning(msg)
+    }
+    ref_df <- ref_df[ref_df$CpGs %in% overlap, , drop = FALSE]
     # Write the subsetted reference to a temp file
     reference_atlas <- paste0(tmp_dir, "/reference_atlas_subset.csv")
     write.csv(ref_df, reference_atlas, row.names = FALSE)
