@@ -38,9 +38,9 @@ test_that("run_epidish supports cpg_subset argument", {
 test_that("run_epidish warns and proceeds if some CpGs are missing, errors if all are missing", {
   skip_if_not_installed("EpiDISH")
   sig <- methyldeconv::get_epidish_signature_matrix("blood")
-  subset_cpgs <- sig$CpGs[1:5]
-  missing_cpgs <- paste0("cg_missing_", 1:5)
-  beta <- matrix(runif(10 * 3), nrow = 10, ncol = 3)
+  subset_cpgs <- sig$CpGs[1:50]
+  missing_cpgs <- paste0("cg_missing_", 1:50)
+  beta <- matrix(runif(100 * 3), nrow = 100, ncol = 3)
   rownames(beta) <- c(subset_cpgs, missing_cpgs)
   colnames(beta) <- paste0("Sample", 1:3)
   expect_warning(
@@ -180,9 +180,9 @@ test_that("run_methylresolver supports cpg_subset argument", {
 test_that("run_methylresolver warns and proceeds if some CpGs are missing, errors if all are missing", {
   skip_if_not_installed("MethylResolver")
   sig <- methyldeconv::get_methylresolver_signature_matrix()
-  subset_cpgs <- sig$CpGs[1:5]
-  missing_cpgs <- paste0("cg_missing_", 1:5)
-  beta <- matrix(runif(10 * 3), nrow = 10, ncol = 3)
+  subset_cpgs <- sig$CpGs[1:50]
+  missing_cpgs <- paste0("cg_missing_", 1:50)
+  beta <- matrix(runif(100 * 3), nrow = 100, ncol = 3)
   rownames(beta) <- c(subset_cpgs, missing_cpgs)
   colnames(beta) <- paste0("Sample", 1:3)
   expect_warning(
