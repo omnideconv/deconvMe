@@ -1,10 +1,20 @@
-#' Function to plot the results from `deconvolute()`  as boxplots for each celltype
+#' Function to plot deconvolution results as boxplots for each cell type
 #'
-#' @param result result from `deconvolute()` 
+#' @param result A data frame containing deconvolution results. Rows must correspond to samples, columns to cell types. Row names must be sample identifiers. The data frame can originate from `deconvolute()`, or from any external deconvolution method, as long as it matches this structure.
+#'
+#' @details
+#' The input data frame must:
+#'   - Have samples as rows and cell types as columns
+#'   - Have row names set to sample identifiers
+#'   - Contain only numeric values (cell type fractions or proportions)
+#'
+#' Example of a valid input:
+#'   SampleID | CellTypeA | CellTypeB | CellTypeC
+#'   -------- | --------- | --------- | ---------
+#'   Sample1  |   0.2     |   0.5     |   0.3
+#'   Sample2  |   0.1     |   0.7     |   0.2
 #'
 #' @export
-#'
-#' 
 results_boxplot <- function(result){
   if (!is.data.frame(result)) {
     stop("Input to results_boxplot must be a data frame.")
@@ -25,13 +35,23 @@ results_boxplot <- function(result){
 }
 
 
-#' Function to plot the results from `deconvolute()`  as barplots for each sample
+#' Function to plot deconvolution results as barplots for each sample
 #'
-#' @param result result from `deconvolute()` 
+#' @param result A data frame containing deconvolution results. Rows must correspond to samples, columns to cell types. Row names must be sample identifiers. The data frame can originate from `deconvolute()`, or from any external deconvolution method, as long as it matches this structure.
+#'
+#' @details
+#' The input data frame must:
+#'   - Have samples as rows and cell types as columns
+#'   - Have row names set to sample identifiers
+#'   - Contain only numeric values (cell type fractions or proportions)
+#'
+#' Example of a valid input:
+#'   SampleID | CellTypeA | CellTypeB | CellTypeC
+#'   -------- | --------- | --------- | ---------
+#'   Sample1  |   0.2     |   0.5     |   0.3
+#'   Sample2  |   0.1     |   0.7     |   0.2
 #'
 #' @export
-#'
-#' 
 results_barplot <- function(result){
   if (!is.data.frame(result)) {
     stop("Input to results_barplot must be a data frame.")
@@ -51,13 +71,27 @@ results_barplot <- function(result){
       ggplot2::theme(legend.position = 'top')
 }
 
-#' Function to plot the results from `deconvolute_combined()` as boxplots for each celltype and celltype
+#' Function to plot aggregated deconvolution results as boxplots for each cell type and method
 #'
-#' @param result result from `deconvolute_combined()` 
+#' @param result A data frame containing aggregated deconvolution results. Must have columns: 'sample', 'celltype', 'value', and 'method'. This can originate from `deconvolute_combined()` or any external source, as long as the structure matches.
+#'
+#' @details
+#' The input data frame must:
+#'   - Contain columns: 'sample', 'celltype', 'value', and 'method'
+#'   - 'sample': sample identifier (character)
+#'   - 'celltype': cell type name (character)
+#'   - 'value': cell type fraction or proportion (numeric)
+#'   - 'method': deconvolution method name (character)
+#'
+#' Example of a valid input:
+#'   sample   | celltype | value | method
+#'   -------- | -------- | ----- | --------
+#'   Sample1  |   A      | 0.2   | method1
+#'   Sample1  |   B      | 0.5   | method1
+#'   Sample2  |   A      | 0.1   | method2
+#'   Sample2  |   B      | 0.7   | method2
 #'
 #' @export
-#'
-#' 
 results_aggregated_boxplot <- function(result){
   if (!is.data.frame(result)) {
     stop("Input to results_aggregated_boxplot must be a data frame.")
