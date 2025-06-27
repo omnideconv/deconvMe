@@ -1,7 +1,7 @@
 Package: methyldeconv
 Title: Unified access to DNA methylation based cell-type deconvolution
     methods
-Version: 0.0.3
+Version: 1.1.0
 Authors@R: 
     person("Alexander", "Dietrich", , "alex.dietrich@tum.de", role = c("aut", "cre"))
 Description: runs several cell type deconvolution algorithms.
