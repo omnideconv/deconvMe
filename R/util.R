@@ -146,14 +146,14 @@ rename_cell_types <- function(input_celltypes){
 
 #' Initialize Python Environment with Miniconda
 #'
-#' Sets up a Miniconda environment with Python 3.8 for the 'r-methyldeconv' package.
-#' Installs Miniconda if not present, creates the 'r-methyldeconv' Conda environment 
+#' Sets up a Miniconda environment with Python 3.8 for the 'r-deconvMe' package.
+#' Installs Miniconda if not present, creates the 'r-deconvMe' Conda environment 
 #' if it doesn't exist, and installs required Python packages (`numpy`, `pandas`, 
 #' `scipy`, `matplotlib`).
 #'
 #' @details 
 #' - Installs Miniconda if missing.
-#' - Creates 'r-methyldeconv' environment with Python 3.8 and installs dependencies.
+#' - Creates 'r-deconvMe' environment with Python 3.8 and installs dependencies.
 #' - Activates the environment and displays Python configuration.
 #'
 #' @import reticulate
@@ -172,15 +172,15 @@ init_python <- function(){
     suppressMessages(reticulate::install_miniconda())
   }
   
-  if (!(reticulate::condaenv_exists("r-methyldeconv"))) {
-    message("Create conda evironment 'r-methyldeconv' for MethAtlas...")
-    reticulate::conda_create("r-methyldeconv", python_version = "3.8")
+  if (!(reticulate::condaenv_exists("r-deconvMe"))) {
+    message("Create conda evironment 'r-deconvMe' for MethAtlas...")
+    reticulate::conda_create("r-deconvMe", python_version = "3.8")
     message("Install all python dependencies...")
-    reticulate::py_install(packages = c("numpy", "pandas", "scipy", "matplotlib") , envname = "r-methyldeconv",  method = "conda", pip = T)
+    reticulate::py_install(packages = c("numpy", "pandas", "scipy", "matplotlib") , envname = "r-deconvMe",  method = "conda", pip = T)
   }
 
   
-  reticulate::use_condaenv(condaenv = "r-methyldeconv", required = FALSE)
+  reticulate::use_condaenv(condaenv = "r-deconvMe", required = FALSE)
   reticulate::py_config()
   
 }

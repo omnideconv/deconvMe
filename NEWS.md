@@ -1,3 +1,7 @@
+# deconvMe 1.2.0
+
+* rebranded methyldeconv to deconvMe
+
 # methyldeconv 1.1.0
 
 * Added unified signature matrix getter functions for all deconvolution methods (EpiDISH, Houseman, MethylCC, MethylResolver, MethAtlas), with consistent data frame output and documentation.

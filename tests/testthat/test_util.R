@@ -1,4 +1,4 @@
-library(methyldeconv)
+library(deconvMe)
 
 test_that("normalize_deconv_results normalizes and sets negatives to zero", {
   mat <- matrix(c(0.2, -0.1, 0.9, 0.0), nrow=2, byrow=TRUE)

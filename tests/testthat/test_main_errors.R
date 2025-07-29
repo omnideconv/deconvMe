@@ -1,4 +1,4 @@
-library(methyldeconv)
+library(deconvMe)
 
 test_that("deconvolute errors on unsupported method", {
   expect_error(deconvolute(methyl_set = NULL, method = "notamethod"))

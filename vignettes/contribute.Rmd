@@ -1,19 +1,19 @@
 ---
-title: "Contribute: Adding a New Method to methyldeconv"
+title: "Contribute: Adding a New Method to deconvMe"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Contribute: Adding a New Method to methyldeconv}
+  %\VignetteIndexEntry{Contribute: Adding a New Method to deconvMe}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 
-# Contributing a New Method to methyldeconv
+# Contributing a New Method to deconvMe
 
-Thank you for your interest in contributing to **methyldeconv**! This guide will help you add a new cell-type deconvolution method to the package.
+Thank you for your interest in contributing to **deconvMe**! This guide will help you add a new cell-type deconvolution method to the package.
 
 ## 1. Fork and Clone the Repository
 
-- Fork the [methyldeconv GitHub repository](https://github.com/omnideconv/methyldeconv).
+- Fork the [deconvMe GitHub repository](https://github.com/omnideconv/deconvMe).
 - Clone your fork locally and create a new branch for your feature.
 
 ## 2. Add Your Method Implementation
@@ -30,9 +30,9 @@ Thank you for your interest in contributing to **methyldeconv**! This guide will
 - If your method should be accessible via the unified interface (`deconvolute` or `deconvolute_combined`), update the relevant logic in `main.R`.
 - Add your method to the list of supported methods and document any new parameters.
 
-## 4. Expose All Method Parameters via methyldeconv
+## 4. Expose All Method Parameters via deconvMe
 
-To ensure users can fully utilize your new method, make sure that all relevant parameters of your function are accessible through the main methyldeconv interfaces (`deconvolute` and/or `deconvolute_combined`).
+To ensure users can fully utilize your new method, make sure that all relevant parameters of your function are accessible through the main deconvMe interfaces (`deconvolute` and/or `deconvolute_combined`).
 
 - Update the argument handling in `main.R` so that users can pass any method-specific parameters when calling these functions.
 - Clearly document these parameters in your function's roxygen2 documentation and in the main interface documentation if needed.

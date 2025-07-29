@@ -2,7 +2,7 @@
 % Please edit documentation in R/main.R
 \name{deconvolute}
 \alias{deconvolute}
-\title{Deconvolution with methyldeconv}
+\title{Deconvolution with deconvMe}
 \usage{
 deconvolute(
   methyl_set,
@@ -27,7 +27,7 @@ A matrix with the probabilities of each cell-type for each individual. Rows are
 individuals, columns are cell types.
 }
 \description{
-Deconvolution with methyldeconv
+Deconvolution with deconvMe
 }
 \examples{
 

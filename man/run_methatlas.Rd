@@ -6,7 +6,7 @@
 \usage{
 run_methatlas(
   beta_matrix,
-  reference_atlas = system.file("reference_atlas.csv", package = "methyldeconv"),
+  reference_atlas = system.file("reference_atlas.csv", package = "deconvMe"),
   temp_dir = NULL,
   out_dir = NULL,
   use_epic_reference = FALSE,

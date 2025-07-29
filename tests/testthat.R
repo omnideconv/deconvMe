@@ -7,6 +7,6 @@
 # * https://testthat.r-lib.org/reference/test_package.html#special-files
 
 library(testthat)
-library(methyldeconv)
+library(deconvMe)
 
-test_check("methyldeconv")
+test_check("deconvMe")

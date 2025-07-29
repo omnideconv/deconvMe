@@ -10,7 +10,7 @@
 #' 
 #' @export
 #'
-run_methatlas <- function(beta_matrix, reference_atlas = system.file("reference_atlas.csv", package = "methyldeconv"), temp_dir = NULL, out_dir = NULL, use_epic_reference=FALSE, cpg_subset = NULL){
+run_methatlas <- function(beta_matrix, reference_atlas = system.file("reference_atlas.csv", package = "deconvMe"), temp_dir = NULL, out_dir = NULL, use_epic_reference=FALSE, cpg_subset = NULL){
   # check if python is installed, else install
   init_python()
   
@@ -36,7 +36,7 @@ run_methatlas <- function(beta_matrix, reference_atlas = system.file("reference_
   
   # subset reference if applicable
   if(use_epic_reference){
-    reference_atlas <- system.file("reference_atlas_epic.csv", package = "methyldeconv")
+    reference_atlas <- system.file("reference_atlas_epic.csv", package = "deconvMe")
   }
   
   ref_df <- read.csv(reference_atlas, check.names = FALSE)
@@ -59,7 +59,7 @@ run_methatlas <- function(beta_matrix, reference_atlas = system.file("reference_
   }
   
   # run meth_atlas
-  system(paste("python", system.file("deconvolve.py", package = "methyldeconv")," -a", reference_atlas, beta_path, "--out", out_dir))
+  system(paste("python", system.file("deconvolve.py", package = "deconvMe")," -a", reference_atlas, beta_path, "--out", out_dir))
   
   # read the results to provide as data frame
   as.matrix(t(read.csv(paste0(out_dir, "/beta_deconv_output.csv"),
@@ -73,7 +73,7 @@ run_methatlas <- function(beta_matrix, reference_atlas = system.file("reference_
 #' @param reference_atlas Path to a csv file (default: package reference_atlas.csv)
 #' @return Signature matrix as tibble with CpGs in rows (column 'CpGs') and cell types in columns
 #' @export
-get_methatlas_signature_matrix <- function(reference_atlas = system.file("reference_atlas.csv", package = "methyldeconv")) {
+get_methatlas_signature_matrix <- function(reference_atlas = system.file("reference_atlas.csv", package = "deconvMe")) {
   read.csv(reference_atlas, check.names = FALSE)
 }
   

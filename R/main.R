@@ -14,7 +14,7 @@ deconvolution_methods <- c(
 )
 
 
-#' Deconvolution with methyldeconv
+#' Deconvolution with deconvMe
 #'
 #' @param methyl_set A minfi MethylSet
 #' @param method A string specifying the method. Supported methods are 'epidish', 'houseman', 'methylcc', 'methylresolver', 'methatlas'
@@ -95,7 +95,7 @@ deconvolute <- function(methyl_set, method=deconvolution_methods, scale_results 
 deconvolute_combined <- function(methyl_set, array = c('450k','EPIC'), methods, scale_results = FALSE, ...){
   
   if(any(!methods %in% deconvolution_methods)){
-    stop(paste0('At least one of your selected methods is not supported by methyldeconv. Please check your spelling, supported methods are: ',
+    stop(paste0('At least one of your selected methods is not supported by deconvMe. Please check your spelling, supported methods are: ',
                 'epidish, houseman, methylcc, methylresolver, methatlas'))
   }
   
