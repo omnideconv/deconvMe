@@ -27,6 +27,7 @@ deconvMe provides functions to access the signature matrices used by each deconv
 
 ```{r, message=FALSE, warning=FALSE}
 library(deconvMe)
+options(matrixStats.useNames.NA = "deprecated")
 ```
 
 ## EpiDISH

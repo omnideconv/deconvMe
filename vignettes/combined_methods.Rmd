@@ -1,0 +1,131 @@
+---
+title: "Combined Methods Approach in deconvMe"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Combined Methods Approach in deconvMe}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+# Combined Methods Approach in deconvMe
+
+The `deconvolute_combined()` function in deconvMe allows you to run multiple cell-type deconvolution methods simultaneously and create aggregated results. This approach can help reduce method-specific biases and provide more robust estimates of cell-type proportions.
+
+## Basic Usage
+
+```{r, message=FALSE, warning=FALSE}
+library(deconvMe)
+library(minfiData)
+options(matrixStats.useNames.NA = "deprecated")
+
+# Example data
+methyl_set <- minfiData::MsetEx
+
+# Run multiple methods
+result_combined <- deconvolute_combined(
+  methyl_set = methyl_set,
+  methods = c('epidish', 'houseman', 'methylcc'),
+  array = '450k'
+)
+```
+
+## Understanding the Output
+
+The combined results include both individual method results and aggregated estimates:
+
+```{r}
+# View the structure
+head(result_combined)
+
+# Check available methods
+unique(result_combined$method)
+
+# Check available cell types
+unique(result_combined$celltype)
+```
+
+## Cell-Type Standardization
+
+The function automatically standardizes cell-type names across methods:
+
+```{r}
+# Example of cell-type mapping
+library(dplyr)
+
+# Show how cell types are mapped
+cell_type_mapping <- data.frame(
+  Original = c("CD8T", "CD4T", "B", "NK", "Mono", "Neu", "Unknown"),
+  Standardized = c("T cell CD8+", "T cell CD4+", "B cell", "NK cell", "Monocyte", "Neutrophil", "other")
+)
+knitr::kable(cell_type_mapping, caption = "Cell-type standardization mapping")
+```
+
+## The "Other" Category
+
+The "other" category includes:
+- Cell types not in the standardized mapping
+- Method-specific cell types without equivalents
+- Rare or specialized cell populations
+
+This category should be interpreted carefully, as it may represent:
+- True rare cell types
+- Method-specific artifacts
+- Incomplete cell-type coverage
+
+## Visualizing Combined Results
+
+```{r, fig.height=6, fig.width=10, message=FALSE, warning=FALSE}
+# Create visualization of individual vs aggregated results
+library(ggplot2)
+
+# Filter for one sample to show the comparison
+sample_data <- result_combined[result_combined$sample == result_combined$sample[1], ]
+
+ggplot(sample_data, aes(x = celltype, y = value, fill = method)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  labs(title = "Individual Methods vs Aggregated Results",
+       subtitle = paste("Sample:", sample_data$sample[1]),
+       y = "Estimated Fraction",
+       x = "Cell Type") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+## Limitations and Considerations
+
+### 1. Method Heterogeneity
+Different methods use different algorithms and reference datasets, which may not be directly comparable. Consider:
+- Whether methods are validated for your tissue type
+- The quality and relevance of reference datasets
+- Algorithm-specific assumptions
+
+### 2. Equal Weighting
+The current implementation gives equal weight to all methods. This may not be optimal if:
+- Some methods are more reliable for your specific use case
+- Methods have different levels of validation
+- You have prior knowledge about method performance
+
+### 3. Missing Data
+If a method fails to estimate a particular cell type, it may be excluded from aggregation, potentially biasing results.
+
+### 4. Cell-Type Coverage
+Methods may detect different sets of cell types, leading to incomplete coverage in aggregated results.
+
+## Quality Control
+```{r}
+# Check for consistency across methods
+consistency_check <- result_combined %>%
+  group_by(sample, celltype) %>%
+  summarise(
+    mean_value = mean(value),
+    sd_value = sd(value),
+    cv = sd_value / mean_value,  # coefficient of variation
+    .groups = 'drop'
+  ) %>%
+  filter(!is.na(mean_value))
+
+# Identify cell types with high variability across methods
+high_variability <- consistency_check %>%
+  filter(cv > 0.5)  # arbitrary threshold
+```
+
