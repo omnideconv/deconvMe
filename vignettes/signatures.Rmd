@@ -1,8 +1,8 @@
 ---
-title: "Signature Matrices and Custom CpGs in methyldeconv"
+title: "Signature Matrices and Custom CpGs in deconvMe"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Signature Matrices and Custom CpGs in methyldeconv}
+  %\VignetteIndexEntry{Signature Matrices and Custom CpGs in deconvMe}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -23,10 +23,10 @@ The accuracy of cell-type deconvolution depends heavily on how well the signatur
 
 # Accessing Signature Matrices
 
-methyldeconv provides functions to access the signature matrices used by each deconvolution method. These matrices define the reference methylation profiles for each cell type.
+deconvMe provides functions to access the signature matrices used by each deconvolution method. These matrices define the reference methylation profiles for each cell type.
 
 ```{r, message=FALSE, warning=FALSE}
-library(methyldeconv)
+library(deconvMe)
 ```
 
 ## EpiDISH

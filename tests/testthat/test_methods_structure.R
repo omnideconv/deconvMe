@@ -1,4 +1,4 @@
-library(methyldeconv)
+library(deconvMe)
 
 skip_if_not_installed("minfiData")
 library(minfiData)
@@ -63,7 +63,7 @@ test_that("run_methatlas output is a matrix/data.frame", {
 
 test_that("deconvolute output is a data.frame with expected columns", {
   res <- deconvolute(methyl_set = methyl_set_small, method = "epidish")
-  colnames(res) <- methyldeconv::rename_cell_types(colnames(res))
+  colnames(res) <- deconvMe::rename_cell_types(colnames(res))
   expect_true(is.data.frame(res))
   expect_true(all(c("B cell", "Monocyte", "Neutrophil", "NK cell", "T cell CD4+", "T cell CD8+") %in% colnames(res)))
 })

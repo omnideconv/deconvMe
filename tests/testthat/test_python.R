@@ -1,6 +1,6 @@
-library(methyldeconv)
+library(deconvMe)
 
-methyldeconv::init_python()
+deconvMe::init_python()
 
 test_that("Python environment creation works", {
   
@@ -12,7 +12,7 @@ test_that("Python environment creation works", {
 
 test_that("Python environment exists", {
 
-  expect_identical(info = "r-methyldeconv exists", 
-                   object = reticulate::condaenv_exists('r-methyldeconv'), 
+  expect_identical(info = "r-deconvMe exists", 
+                   object = reticulate::condaenv_exists('r-deconvMe'), 
                    expected = TRUE)
 })

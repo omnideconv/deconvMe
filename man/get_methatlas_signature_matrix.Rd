@@ -5,7 +5,7 @@
 \title{Get MethAtlas Signature Matrix}
 \usage{
 get_methatlas_signature_matrix(
-  reference_atlas = system.file("reference_atlas.csv", package = "methyldeconv")
+  reference_atlas = system.file("reference_atlas.csv", package = "deconvMe")
 )
 }
 \arguments{

@@ -1,12 +1,12 @@
-# methyldeconv
+# deconvMe
 
 <!-- badges: start -->
 
-[![R-CMD-check](https://github.com/omnideconv/methyldeconv/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/omnideconv/methyldeconv/actions/workflows/R-CMD-check.yml) [![Codecov test coverage](https://codecov.io/gh/omnideconv/methyldeconv/branch/main/graph/badge.svg)](https://app.codecov.io/gh/omnideconv/methyldeconv?branch=main)
+[![R-CMD-check](https://github.com/omnideconv/deconvMe/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/omnideconv/deconvMe/actions/workflows/R-CMD-check.yml) [![Codecov test coverage](https://codecov.io/gh/omnideconv/deconvMe/branch/main/graph/badge.svg)](https://app.codecov.io/gh/omnideconv/deconvMe?branch=main)
 
 <!-- badges: end -->
 
-Ever wanted to apply cell-type deconvolution on your DNA methylation data but could not decide which method to use? Here is **methyldeconv** to help your needs!
+Ever wanted to apply cell-type deconvolution on your DNA methylation data but could not decide which method to use? Here is **deconvMe** to help your needs!
 
 This package integrates unified access to five reference-based cell-type deconvolution methods that can directly be applied to Illumina array data (450k, EPIC arrays) or bisulfite sequencing data (RRBS, WGBS).
 
@@ -22,23 +22,23 @@ The included methods are:
 
 ## Installation
 
-You can install methyldeconv from [GitHub](https://github.com/), we recommend to use the [pak](https://github.com/r-lib/pak) package manager:
+You can install deconvMe from [GitHub](https://github.com/), we recommend to use the [pak](https://github.com/r-lib/pak) package manager:
 
 ``` r
 # install the `pak` package manager
 install.packages("pak")
 
-pak::pkg_install("omnideconv/methyldeconv")
+pak::pkg_install("omnideconv/deconvMe")
 ```
 
 ## Example
 
-methyldeconv can either be applied directly to a methylSet from the minfi package, or you can apply each method separately on a beta matrix with Illumina CpG IDs.
+deconvMe can either be applied directly to a methylSet from the minfi package, or you can apply each method separately on a beta matrix with Illumina CpG IDs.
 
 Both cases will be demonstrated here using example data from minfi:
 
 ``` r
-library(methyldeconv)
+library(deconvMe)
 library(minfi)
 library(minfiData)
 
@@ -49,29 +49,29 @@ beta_matrix <- minfi::getBeta(ratio_set)
 
 
 # run EpiDISH for deconvolution of example data
-result <- methyldeconv::deconvolute(methyl_set = methyl_set, method = 'epidish')
+result <- deconvMe::deconvolute(methyl_set = methyl_set, method = 'epidish')
 
-result_raw <- methyldeconv::run_epidish(beta_matrix = beta_matrix, mode='RPC')
+result_raw <- deconvMe::run_epidish(beta_matrix = beta_matrix, mode='RPC')
 
 
 # you can also run multiple methods at the same time and get their results + aggregated results:
-result_multiple <- methyldeconv::deconvolute_combined(methyl_set = methyl_set,
+result_multiple <- deconvMe::deconvolute_combined(methyl_set = methyl_set,
                                                       methods = c('epidish','houseman'),
                                                       array = '450k')
 ```
 
-With methyldeconv you can either get the original result object of each respective method (`methyldeconv::run_XXX`) or a table with cell-type fractions that has a unified format between methods (`methyldeconv::deconvolute`).The unified results can be visualized using the methyldeconv functions `results_barplot()` or `results_boxplot()`.
+With deconvMe you can either get the original result object of each respective method (`deconvMe::run_XXX`) or a table with cell-type fractions that has a unified format between methods (`deconvMe::deconvolute`).The unified results can be visualized using the deconvMe functions `results_barplot()` or `results_boxplot()`.
 
 ``` r
-methyldeconv::results_barplot(result)
+deconvMe::results_barplot(result)
 
-methyldeconv::results_boxplot(result)
+deconvMe::results_boxplot(result)
 ```
 
-Results from a run with more than one method (`methyldeconv::deconvolute_combined`) can be easily visualized as well with `results_aggregated_boxplot`:
+Results from a run with more than one method (`deconvMe::deconvolute_combined`) can be easily visualized as well with `results_aggregated_boxplot`:
 
 ```r
-methyldeconv::results_aggregated_boxplot(result_multiple)
+deconvMe::results_aggregated_boxplot(result_multiple)
 ```
 
 
@@ -79,5 +79,5 @@ methyldeconv::results_aggregated_boxplot(result_multiple)
 
 A full list of dependencies can be displayed with `pak`:
 ``` r
-pak::pkg_deps_tree("omnideconv/methyldeconv")
+pak::pkg_deps_tree("omnideconv/deconvMe")
 ```

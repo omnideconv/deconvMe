@@ -15,7 +15,7 @@ methyldeconv provides several functions to visualize the results of cell-type de
 
 We'll use example data from the `minfi` and `minfiData` packages:
 
-```r
+```{r, message=FALSE, warning=FALSE}
 library(methyldeconv)
 library(minfi)
 library(minfiData)
@@ -28,7 +28,7 @@ beta_matrix <- minfi::getBeta(ratio_set)
 # Run deconvolution
 result <- methyldeconv::deconvolute(methyl_set = methyl_set, method = 'epidish')
 result_multiple <- methyldeconv::deconvolute_combined(methyl_set = methyl_set,
-                                                      methods = c('epidish','houseman'),
+                                                      methods = c('epidish','methylcc'),
                                                       array = '450k')
 ```
 
@@ -36,7 +36,7 @@ result_multiple <- methyldeconv::deconvolute_combined(methyl_set = methyl_set,
 
 The `results_barplot()` function creates a barplot for each sample, showing the estimated cell-type fractions:
 
-```r
+```{r, fig.height=4, fig.width=8}
 methyldeconv::results_barplot(result)
 ```
 
@@ -44,7 +44,7 @@ methyldeconv::results_barplot(result)
 
 The `results_boxplot()` function creates a boxplot for each cell type, summarizing the distribution of estimated fractions across samples:
 
-```r
+```{r, fig.height=4, fig.width=8}
 methyldeconv::results_boxplot(result)
 ```
 
@@ -52,7 +52,7 @@ methyldeconv::results_boxplot(result)
 
 If you run multiple methods using `deconvolute_combined()`, you can visualize the aggregated results with `results_aggregated_boxplot()`:
 
-```r
+```{r, fig.height=4, fig.width=8}
 methyldeconv::results_aggregated_boxplot(result_multiple)
 ```
 

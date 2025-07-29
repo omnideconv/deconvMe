@@ -15,7 +15,7 @@ Welcome to **methyldeconv**! This vignette will help you get up and running with
 
 You can install methyldeconv from GitHub using the [pak](https://github.com/r-lib/pak) package manager:
 
-```r
+```{r, eval=FALSE}
 # install the `pak` package manager
 install.packages("pak")
 
@@ -26,9 +26,9 @@ pak::pkg_install("omnideconv/methyldeconv")
 
 methyldeconv can be applied directly to a methylSet from the minfi package, or you can apply each method separately on a beta matrix with Illumina CpG IDs.
 
-Both cases are demonstrated below using example data from minfi:
+Below, we demonstrate how to use the EpiDISH method with example data from minfi:
 
-```r
+```{r, message=FALSE, warning=FALSE}
 library(methyldeconv)
 library(minfi)
 library(minfiData)
@@ -40,27 +40,14 @@ beta_matrix <- minfi::getBeta(ratio_set)
 
 # run EpiDISH for deconvolution of example data
 result <- methyldeconv::deconvolute(methyl_set = methyl_set, method = 'epidish')
-
-result_raw <- methyldeconv::run_epidish(beta_matrix = beta_matrix, mode='RPC')
-
-# you can also run multiple methods at the same time and get their results + aggregated results:
-result_multiple <- methyldeconv::deconvolute_combined(methyl_set = methyl_set,
-                                                      methods = c('epidish','houseman'),
-                                                      array = '450k')
 ```
 
-With methyldeconv you can either get the original result object of each respective method (`methyldeconv::run_XXX`) or a table with cell-type fractions that has a unified format between methods (`methyldeconv::deconvolute`). The unified results can be visualized using the methyldeconv functions `results_barplot()` or `results_boxplot()`.
+## Viewing the Results
 
-```r
-methyldeconv::results_barplot(result)
+The result of the deconvolution is a table with the estimated cell-type fractions for each sample. You can view it directly as a nicely formatted table:
 
-methyldeconv::results_boxplot(result)
-```
-
-Results from a run with more than one method (`methyldeconv::deconvolute_combined`) can be easily visualized as well with `results_aggregated_boxplot`:
-
-```r
-methyldeconv::results_aggregated_boxplot(result_multiple)
+```{r}
+knitr::kable(head(result), caption = "Estimated cell-type fractions for the first few samples")
 ```
 
 For more details, see the package documentation and other vignettes! 

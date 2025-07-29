@@ -1,35 +1,35 @@
 ---
-title: "Getting Started with methyldeconv"
+title: "Getting Started with deconvMe"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Getting Started with methyldeconv}
+  %\VignetteIndexEntry{Getting Started with deconvMe}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 
-# Getting Started with methyldeconv
+# Getting Started with deconvMe
 
-Welcome to **methyldeconv**! This vignette will help you get up and running with cell-type deconvolution for DNA methylation data using the package's unified interface and included methods.
+Welcome to **deconvMe**! This vignette will help you get up and running with cell-type deconvolution for DNA methylation data using the package's unified interface and included methods.
 
 ## Installation
 
-You can install methyldeconv from GitHub using the [pak](https://github.com/r-lib/pak) package manager:
+You can install deconvMe from GitHub using the [pak](https://github.com/r-lib/pak) package manager:
 
 ```{r, eval=FALSE}
 # install the `pak` package manager
 install.packages("pak")
 
-pak::pkg_install("omnideconv/methyldeconv")
+pak::pkg_install("omnideconv/deconvMe")
 ```
 
 ## Example Usage
 
-methyldeconv can be applied directly to a methylSet from the minfi package, or you can apply each method separately on a beta matrix with Illumina CpG IDs.
+deconvMe can be applied directly to a methylSet from the minfi package, or you can apply each method separately on a beta matrix with Illumina CpG IDs.
 
 Below, we demonstrate how to use the EpiDISH method with example data from minfi:
 
 ```{r, message=FALSE, warning=FALSE}
-library(methyldeconv)
+library(deconvMe)
 library(minfi)
 library(minfiData)
 
@@ -39,7 +39,7 @@ ratio_set <- minfi::ratioConvert(methyl_set)
 beta_matrix <- minfi::getBeta(ratio_set)
 
 # run EpiDISH for deconvolution of example data
-result <- methyldeconv::deconvolute(methyl_set = methyl_set, method = 'epidish')
+result <- deconvMe::deconvolute(methyl_set = methyl_set, method = 'epidish')
 ```
 
 ## Viewing the Results

@@ -1,4 +1,4 @@
-library(methyldeconv)
+library(deconvMe)
 
 test_that("results_boxplot runs without error on valid input", {
   df <- as.data.frame(matrix(runif(20), nrow=4))
