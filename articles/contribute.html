@@ -5,12 +5,12 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Contribute: Adding a New Method to methyldeconv • methyldeconv</title>
+<title>Contribute: Adding a New Method to deconvMe • deconvMe</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Contribute: Adding a New Method to methyldeconv">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Contribute: Adding a New Method to deconvMe">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -18,9 +18,9 @@
 
     <nav class="navbar navbar-expand-lg fixed-top bg-light" data-bs-theme="light" aria-label="Site navigation"><div class="container">
 
-    <a class="navbar-brand me-2" href="../index.html">methyldeconv</a>
+    <a class="navbar-brand me-2" href="../index.html">deconvMe</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -45,7 +45,7 @@
 <li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json">
 </form></li>
-<li class="nav-item"><a class="external-link nav-link" href="https://github.com/omnideconv/methyldeconv/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/omnideconv/deconvMe/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul>
 </div>
 
@@ -59,27 +59,27 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
 
-      <h1>Contribute: Adding a New Method to methyldeconv</h1>
+      <h1>Contribute: Adding a New Method to deconvMe</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/omnideconv/methyldeconv/blob/main/vignettes/contribute.Rmd" class="external-link"><code>vignettes/contribute.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/omnideconv/deconvMe/blob/main/vignettes/contribute.Rmd" class="external-link"><code>vignettes/contribute.Rmd</code></a></small>
       <div class="d-none name"><code>contribute.Rmd</code></div>
     </div>
 
     
     
 <div class="section level2">
-<h2 id="contributing-a-new-method-to-methyldeconv">Contributing a New Method to methyldeconv<a class="anchor" aria-label="anchor" href="#contributing-a-new-method-to-methyldeconv"></a>
+<h2 id="contributing-a-new-method-to-deconvme">Contributing a New Method to deconvMe<a class="anchor" aria-label="anchor" href="#contributing-a-new-method-to-deconvme"></a>
 </h2>
 <p>Thank you for your interest in contributing to
-<strong>methyldeconv</strong>! This guide will help you add a new
-cell-type deconvolution method to the package.</p>
+<strong>deconvMe</strong>! This guide will help you add a new cell-type
+deconvolution method to the package.</p>
 <div class="section level3">
 <h3 id="fork-and-clone-the-repository">1. Fork and Clone the Repository<a class="anchor" aria-label="anchor" href="#fork-and-clone-the-repository"></a>
 </h3>
 <ul>
-<li>Fork the <a href="https://github.com/omnideconv/methyldeconv" class="external-link">methyldeconv GitHub
-repository</a>.</li>
+<li>Fork the <a href="https://github.com/omnideconv/deconvMe" class="external-link">deconvMe
+GitHub repository</a>.</li>
 <li>Clone your fork locally and create a new branch for your
 feature.</li>
 </ul>
@@ -114,11 +114,11 @@ new parameters.</li>
 </ul>
 </div>
 <div class="section level3">
-<h3 id="expose-all-method-parameters-via-methyldeconv">4. Expose All Method Parameters via methyldeconv<a class="anchor" aria-label="anchor" href="#expose-all-method-parameters-via-methyldeconv"></a>
+<h3 id="expose-all-method-parameters-via-deconvme">4. Expose All Method Parameters via deconvMe<a class="anchor" aria-label="anchor" href="#expose-all-method-parameters-via-deconvme"></a>
 </h3>
 <p>To ensure users can fully utilize your new method, make sure that all
 relevant parameters of your function are accessible through the main
-methyldeconv interfaces (<code>deconvolute</code> and/or
+deconvMe interfaces (<code>deconvolute</code> and/or
 <code>deconvolute_combined</code>).</p>
 <ul>
 <li>Update the argument handling in <code>main.R</code> so that users

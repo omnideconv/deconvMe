@@ -6,7 +6,7 @@ articles:
   getting_started: getting_started.html
   signatures: signatures.html
   visualization: visualization.html
-last_built: 2025-06-27T09:59Z
+last_built: 2025-07-29T19:58Z
 urls:
-  reference: http://omnideconv.org/methylDeconv/reference
-  article: http://omnideconv.org/methylDeconv/articles
+  reference: http://omnideconv.org/deconvMe/reference
+  article: http://omnideconv.org/deconvMe/articles
