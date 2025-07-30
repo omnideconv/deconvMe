@@ -70,10 +70,11 @@ run_methatlas <- function(beta_matrix, reference_atlas = system.file("reference_
 #' Get MethAtlas Signature Matrix
 #'
 #' Returns the reference matrix used by MethAtlas from a CSV file.
-#' @param reference_atlas Path to a csv file (default: package reference_atlas.csv)
+#'
 #' @return Signature matrix as tibble with CpGs in rows (column 'CpGs') and cell types in columns
 #' @export
-get_methatlas_signature_matrix <- function(reference_atlas = system.file("reference_atlas.csv", package = "deconvMe")) {
+get_methatlas_signature_matrix <- function() {
+  reference_atlas = system.file("reference_atlas.csv", package = "deconvMe")
   read.csv(reference_atlas, check.names = FALSE)
 }
   
