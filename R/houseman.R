@@ -2,7 +2,7 @@
 #'
 #' @param methyl_set A minfi MethylSet
 #' @param array type of methylation array that was used. possible options are '450k' and 'EPIC'
-#' @param compositeCellType Which composite cell type is being deconvoluted. Should be one of "Blood", "CordBloodCombined", "CordBlood", "CordBloodNorway", "CordTissueAndBlood", or "DLPFC". See details for preferred approaches.
+#' @param compositeCellType Which composite cell type is being deconvoluted. Should be one of "Blood", "CordBloodCombined", "CordBlood", "CordBloodNorway", "CordTissueAndBlood", or "DLPFC". 
 #' @param processMethod Joint normalization/background correction for user and reference data. For MethylSet objects only "preprocessQuantile" is available. Set it to any minfi preprocessing function as a character if you want to override it, like "preprocessFunnorm"
 #' @param probeSelect How should probes be selected to distinguish cell types? Options include: 1) "IDOL", (default) for using a customized set of probes obtained from IDOL optimization, available for Blood and Umbilical Cord Blood 2) "both", which selects an equal number (50) of probes (with F-stat p-value < 1E-8) with the greatest magnitude of effect from the hyper- and hypo-methylated sides, and 3) "any", which selects the 100 probes (with F-stat p-value < 1E-8) with the greatest magnitude of difference regardless of direction of effect. This according to minfi algorithm. Default input "auto" in minfi will use "any" for cord blood and "both" otherwise. Please see references for more details. 
 #' @param cellTypes A vector of length K that contains the cell type names. Default: c("CD8T", "CD4T", "NK", "Bcell", "Mono", "Neu"). Please notice that this library use Neutrophils instead of Granulocytes. See details for your library.

@@ -8,6 +8,7 @@ articles:
       - getting_started
       - visualization
       - signatures
+      - combined_methods
   - title: "Contributing"
     contents:
       - contribute
@@ -29,6 +30,8 @@ navbar:
           href: articles/visualization.html
         - text: "Signature Matrices & Custom CpGs"
           href: articles/signatures.html
+        - text: "Combined Methods Approach"
+          href: articles/combined_methods.html
         - text: "Contribute"
           href: articles/contribute.html
 

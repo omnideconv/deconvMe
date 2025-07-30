@@ -75,7 +75,48 @@ deconvolute <- function(methyl_set, method=deconvolution_methods, scale_results 
   return(result)
 }
 
-#' Run selected set of methods and average results
+#' Run multiple deconvolution methods and create aggregated results
+#'
+#' This function runs multiple cell-type deconvolution methods on the same methylation data and creates both individual method results and an aggregated (averaged) estimate. The aggregation approach can help reduce method-specific biases and provide more robust cell-type proportion estimates.
+#'
+#' \strong{How it works:}
+#' \itemize{
+#' \item Runs each specified method independently on the methylation data
+#' \item Standardizes cell-type names across methods using \code{rename_cell_types()}
+#' \item For MethylResolver specifically, combines Tnaive and Tmem into "T cell CD4+" to match other methods
+#' \item Calculates the mean estimate for each cell type across all methods (aggregated results)
+#' \item Returns both individual method results and aggregated results in a long-format data frame
+#' }
+#'
+#' \strong{Cell-type standardization:}
+#' The function uses \code{rename_cell_types()} to standardize cell-type names across different methods. This mapping includes:
+#' \itemize{
+#' \item CD8T/CD8/CD8T-cells_EPIC → "T cell CD8+"
+#' \item CD4T/CD4T-cells_EPIC → "T cell CD4+"
+#' \item B/Bcell/B-cells_EPIC → "B cell"
+#' \item NK/NK-cells_EPIC → "NK cell"
+#' \item Mono/Mon/Monocytes_EPIC → "Monocyte"
+#' \item Neu/Neutro/Neutrophils/Neutrophils_EPIC → "Neutrophil"
+#' \item Any unrecognized cell types → "other"
+#' }
+#'
+#' \strong{Meaning of 'other' cell types:}
+#' The "other" category includes:
+#' \itemize{
+#' \item Cell types that are not in the standardized mapping above
+#' \item Method-specific cell types that don't have direct equivalents in other methods
+#' \item Rare or specialized cell populations that are only detected by certain methods
+#' }
+#'
+#' \strong{Limitations of the aggregation approach:}
+#' \itemize{
+#' \item \strong{Method heterogeneity:} Different methods use different algorithms, reference datasets, and cell-type definitions, which may not be directly comparable
+#' \item \strong{Missing data handling:} If a method fails to estimate a particular cell type, it may be excluded from the aggregation, potentially biasing results
+#' \item \strong{Equal weighting:} The current implementation gives equal weight to all methods, regardless of their individual performance or reliability
+#' \item \strong{Cell-type coverage:} Methods may detect different sets of cell types, leading to incomplete coverage in aggregated results
+#' \item \strong{No confidence intervals:} The aggregation provides point estimates without uncertainty quantification
+#' }
+#'
 #'
 #' @param methyl_set A minfi MethylSet
 #' @param array type of methylation array that was used. possible options are '450k' and 'EPIC'
@@ -85,7 +126,7 @@ deconvolute <- function(methyl_set, method=deconvolution_methods, scale_results 
 #'   Defaults to FALSE.
 #' @param ... Additional parameters, passed to the algorithm used. See individual method documentations for details.
 #'   
-#' @return dataframe with results of all selected methods as well as the combined estimates
+#' @return A data frame with columns: sample, method, celltype, value. Contains results from all individual methods plus an 'aggregated' method that averages the estimates across methods.
 #' @export
 #' @examples 
 #' 

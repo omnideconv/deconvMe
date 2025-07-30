@@ -51,3 +51,17 @@ knitr::kable(head(result), caption = "Estimated cell-type fractions for the firs
 ```
 
 For more details, see the package documentation and other vignettes! 
+
+# Overview of Included Methods
+
+Below is a template table summarizing the deconvolution methods included in deconvMe. This table lists each method, the type of algorithm it uses, the intended tissue types, and the type of data used to build the internal deconvolution reference.
+
+| Name           | Algorithm Type(s)         | Intended Tissue Type(s)      | Reference Source Data                                 |
+|:--------------|:-------------------------|:----------------------------|:------------------------------------------------------|
+| EpiDISH        | Robust Partial Correlations (RPC), Constrained Projection (CP), Support Vector Regression (SVR) | Blood, Epithelial, Breast   | purified blood, epithelial, and non-epithelial data, extended with DNAse Hypersensitivity Sites from Roadmap and ENCODE |
+| Houseman       | Constrained projection/Quadratic Programming (CP/QP) | Blood| Purified blood cell methylation profiles (IDOL-optimized) |
+| MethylCC       | Constrained Linear model based on DMRs | Blood (in deconvMe, can be extended to other tissues)         | purified blood               |
+| MethylResolver | Least Trimmed Squares (LTS) regression | Blood, cancer  | Purified blood methylation profiles (IDOL-optimized), extended with additional leukocytes |
+| MethAtlas      | non-negative least squares (NNLS) | Blood, immune, tissue-wide | Comprehensive atlas of purified tissue and immune cell methylomes |
+
+*This table can be expanded as new methods are added to the package.* 
