@@ -2,12 +2,8 @@
 #'
 #' @param beta_matrix a beta matrix with CpGs in rows and samples in columns
 #' @param mode Choice of a reference-based method ('RPC','CBS','CP')
-#' @param reference A matrix of reference 'centroids', i.e. representative molecular profiles, 
-#' for a number of cell subtypes. rows label molecular features (e.g. CpGs,...) 
-#' and columns label the cell-type. IDs need to be provided as rownames and 
-#' colnames, respectively. Missing value is not allowed, and all values in 
-#' this matrix should be positive or zero. For DNAm data, values should be 
-#' beta-values.
+#' @param reference Either a string (one of 'blood', 'breast', 'epithelial') or a data.frame of reference CpGs, i.e. representative sites, 
+#' for a number of cell subtypes. If a matrix is provided, it will be used directly as the signature matrix.
 #' @param maxit Only used in RPC mode, the limit of the number of IWLS iterations
 #' @param nu.v Only used in CBS mode. It is a vector of several candidate nu values. nu is 
 #' parameter needed for nu-classification, nu-regression, and 
@@ -51,17 +47,35 @@ run_epidish <- function(beta_matrix,
     mode <- mode[1]
     message(paste0(mode, " was chosen as default for \"mode\""))
   }
-  if (length(reference) > 1) {
+  # If reference is a character, use built-in, else use as matrix
+  if (is.character(reference) && length(reference) > 1) {
     reference <- reference[1]
     message(paste0(reference, " was chosen as default for \"reference\""))
   }
   message(paste0("Starting EpiDISH deconvolution with mode ", mode, " ..."))
 
-  ref_mat <- switch(reference,
-    'blood' = EpiDISH::centDHSbloodDMC.m,
-    'breast' = EpiDISH::centEpiFibFatIC.m,
-    'epithelial' = EpiDISH::centEpiFibIC.m
-  )
+  if (is.character(reference)) {
+    ref_mat <- switch(reference,
+      'blood' = EpiDISH::centDHSbloodDMC.m,
+      'breast' = EpiDISH::centEpiFibFatIC.m,
+      'epithelial' = EpiDISH::centEpiFibIC.m,
+      stop("Unknown reference type: ", reference)
+    )
+  } else if (is.data.frame(reference)) {
+    
+    # check if 'CpGs' column exists
+    if(!'CpGs' %in% colnames(reference)){
+      stop("No CpG column in custom reference.")
+    }
+    
+    reference_cpgs <- reference[['CpGs']]
+    ref_mat <- reference |> dplyr::select(-CpGs) |> as.matrix()
+    rownames(ref_mat) <- reference_cpgs
+    
+  } else {
+    stop("reference must be either a character string or a data.frame")
+  }
+
   if (!is.null(cpg_subset)) {
     overlap <- intersect(cpg_subset, rownames(ref_mat))
     missing <- setdiff(cpg_subset, rownames(ref_mat))

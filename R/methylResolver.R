@@ -8,11 +8,12 @@
 #' @param purityModel Random Forest model to predict mixture purity (unknown content) which allows the calculation of absolute cell type fractions. Required if absolute is TRUE. Default is our RF model trained on the consensus purity estimate (CPE) using TCGA data.  
 #' @param seed fixed seed to account for RNG influences
 #' @param cpg_subset Optional character vector of CpGs to subset the signature matrix. Default: NULL (use all CpGs in the signature).
+#' @param reference Either the built-in MethylResolver signature matrix or a data.frame of reference CpGs with a 'CpGs' column and cell types as other columns.
 #'
 #' @export
 #'
 run_methylresolver <- function(beta_matrix, doPar = F, numCores = 1, alpha = seq(0.5,0.9,by = 0.05),
-                               absolute = TRUE, purityModel = MethylResolver::RFmodel, seed = 1, cpg_subset = NULL){
+                               absolute = TRUE, purityModel = MethylResolver::RFmodel, seed = 1, cpg_subset = NULL, reference = NULL){
   
   set.seed(seed)
   
@@ -23,7 +24,23 @@ run_methylresolver <- function(beta_matrix, doPar = F, numCores = 1, alpha = seq
             immediate. = TRUE)
   }
   
-  sig <- MethylResolver::MethylSig
+  # Handle reference parameter
+  if (is.null(reference)) {
+    sig <- MethylResolver::MethylSig
+  } else if (is.data.frame(reference)) {
+    if (!'CpGs' %in% colnames(reference)) {
+      stop("No 'CpGs' column in custom reference data.frame.")
+    }
+    sig <- reference[, -which(colnames(reference) == 'CpGs')]
+    rownames(sig) <- reference$CpGs
+    colnames(sig) <- gsub(pattern = '-', replacement = '_', x = colnames(sig))
+    
+    warning('When a external signature matrix is provided, MethylResolver can no longer estimate tumor purity and absolute will be automatically set to FALSE.')
+    absolute <- FALSE
+  } else {
+    stop("reference must be either NULL (use built-in) or a data.frame")
+  }
+  
   if (!is.null(cpg_subset)) {
     overlap <- intersect(cpg_subset, rownames(sig))
     missing <- setdiff(cpg_subset, rownames(sig))
@@ -48,10 +65,15 @@ run_methylresolver <- function(beta_matrix, doPar = F, numCores = 1, alpha = seq
                                                           absolute = absolute, 
                                                           purityModel = purityModel)
   
-  result_metrics <- result_methylresolver[,1:4]
-  result_fractions <- result_methylresolver[,5:15]
-  result_absolute <- result_methylresolver[,16:26]
-  result_purity <- result_methylresolver[,27]
+  result_metrics <- result_methylresolver[,c('RMSE1', 'R1', 'RMSE2', 'R2')]
+  result_fractions <- result_methylresolver[,colnames(sig)]
+  if(absolute){
+    result_absolute <- result_methylresolver[,paste0('abs_',colnames(sig))]
+    result_purity <- result_methylresolver[['Purity']]
+  }else{
+    result_absolute <- NULL
+    result_purity <- NULL
+  }
   
   return(list(result_metrics=result_metrics,
               result_fractions=result_fractions,
