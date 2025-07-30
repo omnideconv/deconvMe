@@ -69,15 +69,6 @@ The "other" category includes:
 \item \strong{Cell-type coverage:} Methods may detect different sets of cell types, leading to incomplete coverage in aggregated results
 \item \strong{No confidence intervals:} The aggregation provides point estimates without uncertainty quantification
 }
-
-\strong{Best practices:}
-\itemize{
-\item Use methods that are well-validated for your specific tissue type and experimental design
-\item Consider the biological context when interpreting aggregated results
-\item Validate results against independent measurements when possible
-\item Be cautious when aggregating methods with very different cell-type definitions
-\item Consider using the individual method results to assess consistency across methods
-}
 }
 \examples{
 

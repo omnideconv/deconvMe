@@ -117,14 +117,6 @@ deconvolute <- function(methyl_set, method=deconvolution_methods, scale_results 
 #' \item \strong{No confidence intervals:} The aggregation provides point estimates without uncertainty quantification
 #' }
 #'
-#' \strong{Best practices:}
-#' \itemize{
-#' \item Use methods that are well-validated for your specific tissue type and experimental design
-#' \item Consider the biological context when interpreting aggregated results
-#' \item Validate results against independent measurements when possible
-#' \item Be cautious when aggregating methods with very different cell-type definitions
-#' \item Consider using the individual method results to assess consistency across methods
-#' }
 #'
 #' @param methyl_set A minfi MethylSet
 #' @param array type of methylation array that was used. possible options are '450k' and 'EPIC'

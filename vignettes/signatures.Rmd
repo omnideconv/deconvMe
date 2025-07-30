@@ -7,11 +7,28 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-# Background: What Are Signature Matrices?
+# Background: Reference-Based vs Reference-Free Deconvolution
 
-Cell-type deconvolution methods rely on *signature matrices* (also called reference matrices or basis matrices) to estimate the proportions of different cell types in a heterogeneous DNA methylation sample. A signature matrix is a table where each row corresponds to a CpG site (or region), and each column corresponds to a cell type. The entries represent the expected methylation value (often as beta values) for each CpG in each pure cell type.
+Cell-type deconvolution methods can be broadly categorized into two main approaches:
 
-Signature matrices are typically constructed from reference datasets where DNA methylation has been measured in sorted or purified cell populations. The choice of CpGs and the quality of the reference data are critical for accurate deconvolution. Different methods use different strategies for selecting CpGs and constructing their signature matrices:
+## Reference-Based Methods
+Reference-based methods rely on *signature matrices* (also called reference matrices or basis matrices) to estimate the proportions of different cell types in a heterogeneous DNA methylation sample. A signature matrix is a table where each row corresponds to a CpG site (or region), and each column corresponds to a cell type. The entries represent the expected methylation value (often as beta values) for each CpG in each pure cell type.
+
+Signature matrices are typically constructed from reference datasets where DNA methylation has been measured in sorted or purified cell populations. The choice of CpGs and the quality of the reference data are critical for accurate deconvolution.
+
+## Reference-Free Methods
+Reference-free methods attempt to deconvolve cell-type proportions without requiring prior knowledge of cell-type-specific methylation signatures. These methods use computational approaches such as non-negative matrix factorization (NMF) or independent component analysis (ICA) to identify latent cell-type components directly from the mixed methylation data.
+
+## Why deconvMe Focuses on Reference-Based Methods
+
+deconvMe exclusively implements reference-based deconvolution methods because they generally provide **better performance and more reliable results** compared to reference-free approaches. Reference-based methods offer several advantages:
+
+- **Higher accuracy**: Pre-defined signature matrices based on purified cell populations provide more reliable cell-type identification
+- **Better interpretability**: Results can be directly mapped to known cell types with biological meaning
+- **Consistent results**: The same signature matrix applied to different datasets produces comparable results
+- **Validation capability**: Results can be validated against known cell-type proportions when available
+
+Different reference-based methods use different strategies for selecting CpGs and constructing their signature matrices:
 
 - **EpiDISH** uses reference matrices for blood, breast, or epithelial cell types, based on published datasets.
 - **Houseman** uses optimized sets of CpGs (e.g., IDOL-optimized) for blood and other tissues.
