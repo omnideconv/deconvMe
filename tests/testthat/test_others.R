@@ -6,6 +6,7 @@
 # result <- deconvMe::deconvolute(methyl_set =  methyl_set, method = 'epidish')
 
 suppressMessages(library(deconvMe))
+options(matrixStats.useNames.NA = "deprecated")
 
 # ----------------------
 # EpiDISH tests
@@ -104,8 +105,7 @@ test_that("run_houseman warns and proceeds if some CpGs are missing, errors if a
 # ----------------------
 
 test_that("get_methatlas_signature_matrix returns a data frame with expected structure", {
-  ref_path <- system.file("reference_atlas.csv", package = "deconvMe")
-  sig <- deconvMe::get_methatlas_signature_matrix(ref_path)
+  sig <- deconvMe::get_methatlas_signature_matrix()
   expect_s3_class(sig, "data.frame")
   expect_true(nrow(sig) > 0)
   expect_true(ncol(sig) > 0)
@@ -113,14 +113,13 @@ test_that("get_methatlas_signature_matrix returns a data frame with expected str
 })
 
 test_that("run_methatlas supports cpg_subset argument", {
-  ref_path <- system.file("reference_atlas.csv", package = "deconvMe")
-  sig <- deconvMe::get_methatlas_signature_matrix(ref_path)
+  sig <- deconvMe::get_methatlas_signature_matrix()
   subset_cpgs <- sig$CpGs[1:10]
   beta <- matrix(runif(10 * 3), nrow = 10, ncol = 3)
   rownames(beta) <- subset_cpgs
   colnames(beta) <- paste0("Sample", 1:3)
   expect_error(
-    deconvMe::run_methatlas(beta, reference_atlas = ref_path, cpg_subset = subset_cpgs),
+    deconvMe::run_methatlas(beta, cpg_subset = subset_cpgs),
     NA
   )
 })
@@ -130,19 +129,18 @@ test_that("run_methatlas supports cpg_subset argument", {
 # ----------------------
 
 test_that("run_methatlas warns and proceeds if some CpGs are missing, errors if all are missing", {
-  ref_path <- system.file("reference_atlas.csv", package = "deconvMe")
-  sig <- deconvMe::get_methatlas_signature_matrix(ref_path)
+  sig <- deconvMe::get_methatlas_signature_matrix()
   subset_cpgs <- sig$CpGs[1:5]
   missing_cpgs <- paste0("cg_missing_", 1:5)
   beta <- matrix(runif(10 * 3), nrow = 10, ncol = 3)
   rownames(beta) <- c(subset_cpgs, missing_cpgs)
   colnames(beta) <- paste0("Sample", 1:3)
   expect_warning(
-    deconvMe::run_methatlas(beta, reference_atlas = ref_path, cpg_subset = c(subset_cpgs, missing_cpgs)),
+    deconvMe::run_methatlas(beta, cpg_subset = c(subset_cpgs, missing_cpgs)),
     "not present in the reference atlas"
   )
   expect_error(
-    deconvMe::run_methatlas(beta, reference_atlas = ref_path, cpg_subset = missing_cpgs),
+    deconvMe::run_methatlas(beta, cpg_subset = missing_cpgs),
     "None of the specified cpg_subset CpGs are present"
   )
 })
