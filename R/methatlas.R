@@ -1,8 +1,9 @@
 #' run MethAtlas
 #'
 #' @param beta_matrix a beta matrix with CpGs in rows and samples in columns
-#' @param reference_atlas Path to a csv file that saves a reference matrix with CpGs as rows and cell types as columns.
-#'                        The default (tissue-wide) reference file is stored in 'inst/reference_atlas.csv'. 
+#' @param reference Either a path to a csv file that saves a reference matrix with CpGs as rows and cell types as columns,
+#'                  or a data.frame of reference CpGs with a 'CpGs' column and cell types as other columns.
+#'                  The default (tissue-wide) reference file is stored in 'inst/reference_atlas.csv'. 
 #' @param temp_dir Path to directory where the beta matrix will be saved as a csv file.
 #' @param out_dir Path to output directory. Output will be a csv file and a png representing the cell type fractions.
 #' @param use_epic_reference The MethAtlas has a whole-tissue reference or a immunecell-specific reference that is optimized for EPIC arrays (which is a subset of the whole-tissue reference)
@@ -10,7 +11,7 @@
 #' 
 #' @export
 #'
-run_methatlas <- function(beta_matrix, reference_atlas = system.file("reference_atlas.csv", package = "deconvMe"), temp_dir = NULL, out_dir = NULL, use_epic_reference=FALSE, cpg_subset = NULL){
+run_methatlas <- function(beta_matrix, reference = system.file("reference_atlas.csv", package = "deconvMe"), temp_dir = NULL, out_dir = NULL, use_epic_reference=FALSE, cpg_subset = NULL){
   # check if python is installed, else install
   init_python()
   
@@ -34,12 +35,28 @@ run_methatlas <- function(beta_matrix, reference_atlas = system.file("reference_
   beta_path = paste0(tmp_dir, "/beta.csv")
   write.csv(beta_matrix, beta_path)
   
-  # subset reference if applicable
-  if(use_epic_reference){
-    reference_atlas <- system.file("reference_atlas_epic.csv", package = "deconvMe")
+  # Handle reference parameter
+  if (is.character(reference)) {
+    # If it's a character, treat as file path and check if it exists
+    if(!file.exists(reference)) {
+      stop("Reference file does not exist: ", reference)
+    }
+    
+    # If it's epic reference, use the epic reference file
+    if(use_epic_reference){
+      reference <- system.file("reference_atlas_epic.csv", package = "deconvMe")
+    }
+    ref_df <- read.csv(reference, check.names = FALSE)
+  } else if (is.data.frame(reference)) {
+    # If it's a data.frame, use it directly
+    if (!'CpGs' %in% colnames(reference)) {
+      stop("No 'CpGs' column in custom reference data.frame.")
+    }
+    ref_df <- reference
+  } else {
+    stop("reference must be either a character string (file path) or a data.frame")
   }
   
-  ref_df <- read.csv(reference_atlas, check.names = FALSE)
   if (!is.null(cpg_subset)) {
     overlap <- intersect(cpg_subset, ref_df$CpGs)
     missing <- setdiff(cpg_subset, ref_df$CpGs)
@@ -54,12 +71,16 @@ run_methatlas <- function(beta_matrix, reference_atlas = system.file("reference_
     }
     ref_df <- ref_df[ref_df$CpGs %in% overlap, , drop = FALSE]
     # Write the subsetted reference to a temp file
-    reference_atlas <- paste0(tmp_dir, "/reference_atlas_subset.csv")
-    write.csv(ref_df, reference_atlas, row.names = FALSE)
+    reference_path <- paste0(tmp_dir, "/reference_atlas_subset.csv")
+    write.csv(ref_df, reference_path, row.names = FALSE)
+  }else{
+    # Write the reference to a temp file
+    reference_path <- paste0(tmp_dir, "/reference_atlas_temp.csv")
+    write.csv(ref_df, reference_path, row.names = FALSE)
   }
   
   # run meth_atlas
-  system(paste("python", system.file("deconvolve.py", package = "deconvMe")," -a", reference_atlas, beta_path, "--out", out_dir))
+  system(paste("python", system.file("deconvolve.py", package = "deconvMe")," -a", reference_path, beta_path, "--out", out_dir))
   
   # read the results to provide as data frame
   as.matrix(t(read.csv(paste0(out_dir, "/beta_deconv_output.csv"),
@@ -75,6 +96,6 @@ run_methatlas <- function(beta_matrix, reference_atlas = system.file("reference_
 #' @export
 get_methatlas_signature_matrix <- function() {
   reference_atlas = system.file("reference_atlas.csv", package = "deconvMe")
-  read.csv(reference_atlas, check.names = FALSE)
+  unique(read.csv(reference_atlas, check.names = FALSE))
 }
   
