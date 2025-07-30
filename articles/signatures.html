@@ -5,12 +5,12 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Signature Matrices and Custom CpGs in deconvMe • deconvMe</title>
+<title>Signature Matrices and Cross-Signature Deconvolution in deconvMe • deconvMe</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Signature Matrices and Custom CpGs in deconvMe">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Signature Matrices and Cross-Signature Deconvolution in deconvMe">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -60,7 +60,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
 
-      <h1>Signature Matrices and Custom CpGs in deconvMe</h1>
+      <h1>Signature Matrices and Cross-Signature Deconvolution in deconvMe</h1>
             
       
       <small class="dont-index">Source: <a href="https://github.com/omnideconv/deconvMe/blob/main/vignettes/signatures.Rmd" class="external-link"><code>vignettes/signatures.Rmd</code></a></small>
@@ -70,284 +70,153 @@
     
     
 <div class="section level2">
-<h2 id="background-reference-based-vs-reference-free-deconvolution">Background: Reference-Based vs Reference-Free Deconvolution<a class="anchor" aria-label="anchor" href="#background-reference-based-vs-reference-free-deconvolution"></a>
+<h2 id="signature-matrices-in-deconvme">Signature Matrices in deconvMe<a class="anchor" aria-label="anchor" href="#signature-matrices-in-deconvme"></a>
 </h2>
-<p>Cell-type deconvolution methods can be broadly categorized into two
-main approaches:</p>
+<p>deconvMe implements reference-based deconvolution methods that rely
+on <em>signature matrices</em> (reference matrices) to estimate
+cell-type proportions. A signature matrix is a table where each row
+corresponds to a CpG site and each column corresponds to a cell type,
+with entries representing expected methylation values for each CpG in
+each pure cell type.</p>
 <div class="section level3">
-<h3 id="reference-based-methods">Reference-Based Methods<a class="anchor" aria-label="anchor" href="#reference-based-methods"></a>
+<h3 id="accessing-signature-matrices">Accessing Signature Matrices<a class="anchor" aria-label="anchor" href="#accessing-signature-matrices"></a>
 </h3>
-<p>Reference-based methods rely on <em>signature matrices</em> (also
-called reference matrices or basis matrices) to estimate the proportions
-of different cell types in a heterogeneous DNA methylation sample. A
-signature matrix is a table where each row corresponds to a CpG site (or
-region), and each column corresponds to a cell type. The entries
-represent the expected methylation value (often as beta values) for each
-CpG in each pure cell type.</p>
-<p>Signature matrices are typically constructed from reference datasets
-where DNA methylation has been measured in sorted or purified cell
-populations. The choice of CpGs and the quality of the reference data
-are critical for accurate deconvolution.</p>
-</div>
-<div class="section level3">
-<h3 id="reference-free-methods">Reference-Free Methods<a class="anchor" aria-label="anchor" href="#reference-free-methods"></a>
-</h3>
-<p>Reference-free methods attempt to deconvolve cell-type proportions
-without requiring prior knowledge of cell-type-specific methylation
-signatures. These methods use computational approaches such as
-non-negative matrix factorization (NMF) or independent component
-analysis (ICA) to identify latent cell-type components directly from the
-mixed methylation data.</p>
-</div>
-<div class="section level3">
-<h3 id="why-deconvme-focuses-on-reference-based-methods">Why deconvMe Focuses on Reference-Based Methods<a class="anchor" aria-label="anchor" href="#why-deconvme-focuses-on-reference-based-methods"></a>
-</h3>
-<p>deconvMe exclusively implements reference-based deconvolution methods
-because they generally provide <strong>better performance and more
-reliable results</strong> compared to reference-free approaches.
-Reference-based methods offer several advantages:</p>
-<ul>
-<li>
-<strong>Higher accuracy</strong>: Pre-defined signature matrices
-based on purified cell populations provide more reliable cell-type
-identification</li>
-<li>
-<strong>Better interpretability</strong>: Results can be directly
-mapped to known cell types with biological meaning</li>
-<li>
-<strong>Consistent results</strong>: The same signature matrix
-applied to different datasets produces comparable results</li>
-<li>
-<strong>Validation capability</strong>: Results can be validated
-against known cell-type proportions when available</li>
-</ul>
-<p>Different reference-based methods use different strategies for
-selecting CpGs and constructing their signature matrices:</p>
-<ul>
-<li>
-<strong>EpiDISH</strong> uses reference matrices for blood, breast,
-or epithelial cell types, based on published datasets.</li>
-<li>
-<strong>Houseman</strong> uses optimized sets of CpGs (e.g.,
-IDOL-optimized) for blood and other tissues.</li>
-<li>
-<strong>MethylCC</strong> uses differentially methylated regions
-(DMRs) identified from reference data.</li>
-<li>
-<strong>MethylResolver</strong> uses a signature matrix derived from
-large-scale reference data, optimized for robust deconvolution.</li>
-<li>
-<strong>MethAtlas</strong> uses a comprehensive reference atlas,
-with options for tissue-wide or immune-specific signatures.</li>
-</ul>
-<p>The accuracy of cell-type deconvolution depends heavily on how well
-the signature matrix represents the true methylation profiles of the
-cell types present in your samples. In some cases, you may want to use a
-custom set of CpGs (for example, to focus on a subset relevant to your
-study or to match the coverage of your data).</p>
-</div>
-</div>
-<div class="section level2">
-<h2 id="accessing-signature-matrices">Accessing Signature Matrices<a class="anchor" aria-label="anchor" href="#accessing-signature-matrices"></a>
-</h2>
-<p>deconvMe provides functions to access the signature matrices used by
-each deconvolution method. These matrices define the reference
-methylation profiles for each cell type.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/omnideconv/deconvMe" class="external-link">deconvMe</a></span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>matrixStats.useNames.NA <span class="op">=</span> <span class="st">"deprecated"</span><span class="op">)</span></span></code></pre></div>
-<div class="section level3">
-<h3 id="epidish">EpiDISH<a class="anchor" aria-label="anchor" href="#epidish"></a>
-</h3>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Get the blood signature matrix used by EpiDISH</span></span>
-<span><span class="va">sig_epidish</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_epidish_signature_matrix.html">get_epidish_signature_matrix</a></span><span class="op">(</span>reference <span class="op">=</span> <span class="st">"blood"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">sig_epidish</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">##         CpGs     B    NK  CD4T  CD8T  Mono Neutro Eosino</span></span>
-<span><span class="co">## 1 cg01024458 0.034 0.962 0.969 0.958 0.987  0.992  0.991</span></span>
-<span><span class="co">## 2 cg11661493 0.037 0.954 0.971 0.964 0.958  0.962  0.962</span></span>
-<span><span class="co">## 3 cg21596498 0.060 0.980 0.989 0.989 0.980  0.976  0.984</span></span>
-<span><span class="co">## 4 cg05205074 0.049 0.954 0.967 0.961 0.967  0.979  0.986</span></span>
-<span><span class="co">## 5 cg17232476 0.045 0.962 0.969 0.958 0.932  0.980  0.976</span></span>
-<span><span class="co">## 6 cg14936008 0.065 0.976 0.980 0.983 0.977  0.983  0.986</span></span></code></pre>
-</div>
-<div class="section level3">
-<h3 id="houseman">Houseman<a class="anchor" aria-label="anchor" href="#houseman"></a>
-</h3>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Get the Houseman signature matrix</span></span>
-<span><span class="va">sig_houseman</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_houseman_signature_matrix.html">get_houseman_signature_matrix</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">sig_houseman</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">##         CpGs      CD8T      CD4T         NK     Bcell       Mono        Neu</span></span>
-<span><span class="co">## 1 cg08769189 0.1970004 0.6744559 0.52214953 0.9006926 0.82187345 0.69553933</span></span>
-<span><span class="co">## 2 cg07661835 0.1047903 0.4526285 0.88845613 0.8908425 0.90251916 0.88942404</span></span>
-<span><span class="co">## 3 cg00219921 0.1349703 0.8157856 0.92581678 0.9540993 0.94637918 0.94059532</span></span>
-<span><span class="co">## 4 cg13468685 0.6535697 0.9146197 0.07561249 0.1733022 0.03540601 0.03407628</span></span>
-<span><span class="co">## 5 cg04329870 0.2462235 0.8529208 0.86967475 0.8999110 0.90301117 0.90902010</span></span>
-<span><span class="co">## 6 cg14085952 0.7537942 0.2262851 0.90332344 0.7452843 0.80620727 0.90870910</span></span></code></pre>
-</div>
-<div class="section level3">
-<h3 id="methylcc">MethylCC<a class="anchor" aria-label="anchor" href="#methylcc"></a>
-</h3>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Get the DMRs (signature matrix) used by MethylCC</span></span>
-<span><span class="va">sig_methylcc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_methylcc_signature_matrix.html">get_methylcc_signature_matrix</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">sig_methylcc</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">##   seqnames     start       end width strand indexStart indexEnd L      p.value</span></span>
-<span><span class="co">## 1     chr8 145008110 145008397   288      *     238113   238115 3 5.846134e-13</span></span>
-<span><span class="co">## 2    chr13  99223336  99223562   227      *     334524   334525 2 4.997645e-13</span></span>
-<span><span class="co">## 3    chr21  45565328  45565564   237      *     464088   464089 2 9.415751e-12</span></span>
-<span><span class="co">## 4     chr1 226036279 226036279     1      *      42539    42539 1 7.167314e-19</span></span>
-<span><span class="co">## 5     chr7 106511741 106511741     1      *     208376   208376 1 6.686998e-15</span></span>
-<span><span class="co">## 6    chr19  10519375  10519375     1      *     432047   432047 1 2.052548e-14</span></span>
-<span><span class="co">##           dm dmr_max_diff dmr_status status cellType</span></span>
-<span><span class="co">## 1 -0.4454907    0.4858436        DMR     Up     Gran</span></span>
-<span><span class="co">## 2 -0.5149938    0.4649006        DMR     Up     Gran</span></span>
-<span><span class="co">## 3 -0.4231612    0.4044535        DMR     Up     Gran</span></span>
-<span><span class="co">## 4 -0.6644724    0.2957124        DMR     Up     Gran</span></span>
-<span><span class="co">## 5 -0.6039376    0.3929102        DMR     Up     Gran</span></span>
-<span><span class="co">## 6 -0.5303630    0.4404731        DMR     Up     Gran</span></span></code></pre>
-</div>
-<div class="section level3">
-<h3 id="methylresolver">MethylResolver<a class="anchor" aria-label="anchor" href="#methylresolver"></a>
-</h3>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Get the signature matrix used by MethylResolver</span></span>
-<span><span class="va">sig_methylresolver</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_methylresolver_signature_matrix.html">get_methylresolver_signature_matrix</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">sig_methylresolver</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">##         CpGs       Mon Dendritic     Macro       Neu       Eos      Treg</span></span>
-<span><span class="co">## 1 cg03179542 0.7079238 0.5662990 0.5724228 0.3422393 0.3529072 0.1905375</span></span>
-<span><span class="co">## 2 cg02138358 0.7304353 0.6057991 0.5702307 0.6094019 0.3597952 0.1725188</span></span>
-<span><span class="co">## 3 cg12449049 0.7187701 0.5779714 0.5987460 0.3633360 0.2347597 0.1245479</span></span>
-<span><span class="co">## 4 cg01902758 0.7521254 0.6425354 0.6293023 0.4794861 0.3840054 0.1669161</span></span>
-<span><span class="co">## 5 cg16303353 0.8379053 0.6608612 0.6633956 0.7286518 0.5551461 0.1602591</span></span>
-<span><span class="co">## 6 cg14786790 0.7026424 0.5863443 0.5973881 0.3865554 0.1404375 0.1064646</span></span>
-<span><span class="co">##       Tnaive      Tmem        CD8         NK      Bcell</span></span>
-<span><span class="co">## 1 0.10841718 0.2411970 0.12299279 0.20552450 0.12358545</span></span>
-<span><span class="co">## 2 0.13332736 0.1832339 0.14501405 0.21984128 0.15810912</span></span>
-<span><span class="co">## 3 0.08579205 0.1471621 0.05390728 0.15745052 0.09672281</span></span>
-<span><span class="co">## 4 0.12559347 0.1708202 0.13631469 0.27673297 0.29411627</span></span>
-<span><span class="co">## 5 0.14479402 0.1868098 0.14689298 0.27842752 0.26920249</span></span>
-<span><span class="co">## 6 0.10706541 0.1269536 0.00000000 0.05241609 0.13360442</span></span></code></pre>
-</div>
-<div class="section level3">
-<h3 id="methatlas">MethAtlas<a class="anchor" aria-label="anchor" href="#methatlas"></a>
-</h3>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Get the default reference matrix used by MethAtlas</span></span>
-<span><span class="va">sig_methatlas</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_methatlas_signature_matrix.html">get_methatlas_signature_matrix</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">sig_methatlas</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">##         CpGs Monocytes_EPIC B-cells_EPIC CD4T-cells_EPIC NK-cells_EPIC</span></span>
-<span><span class="co">## 1 cg08169020         0.8866       0.2615          0.0149        0.0777</span></span>
-<span><span class="co">## 2 cg25913761         0.8363       0.2210          0.2816        0.4705</span></span>
-<span><span class="co">## 3 cg26955540         0.7658       0.0222          0.1492        0.4005</span></span>
-<span><span class="co">## 4 cg25170017         0.8861       0.5116          0.1021        0.4363</span></span>
-<span><span class="co">## 5 cg12827637         0.5212       0.3614          0.0227        0.2120</span></span>
-<span><span class="co">## 6 cg19442545         0.2013       0.1137          0.0608        0.0410</span></span>
-<span><span class="co">##   CD8T-cells_EPIC Neutrophils_EPIC Erythrocyte_progenitors Adipocytes</span></span>
-<span><span class="co">## 1          0.0164           0.8680                  0.9509     0.0336</span></span>
-<span><span class="co">## 2          0.3961           0.8293                  0.2385     0.3578</span></span>
-<span><span class="co">## 3          0.3474           0.7915                  0.1374     0.1965</span></span>
-<span><span class="co">## 4          0.0875           0.7042                  0.9447     0.0842</span></span>
-<span><span class="co">## 5          0.0225           0.5368                  0.4667     0.0287</span></span>
-<span><span class="co">## 6          0.0668           0.1952                  0.1601     0.0364</span></span>
-<span><span class="co">##   Cortical_neurons Hepatocytes Lung_cells Pancreatic_beta_cells</span></span>
-<span><span class="co">## 1           0.0168      0.0340     0.0416              0.038875</span></span>
-<span><span class="co">## 2           0.3104      0.2389     0.2250              0.132000</span></span>
-<span><span class="co">## 3           0.0978      0.0338     0.0768              0.041725</span></span>
-<span><span class="co">## 4           0.2832      0.2259     0.0544              0.111750</span></span>
-<span><span class="co">## 5           0.1368      0.0307     0.1607              0.065975</span></span>
-<span><span class="co">## 6           0.0222      0.1574     0.0122              0.003825</span></span>
-<span><span class="co">##   Pancreatic_acinar_cells Pancreatic_duct_cells Vascular_endothelial_cells</span></span>
-<span><span class="co">## 1                  0.0209                0.0130                     0.0323</span></span>
-<span><span class="co">## 2                  0.2249                0.1996                     0.3654</span></span>
-<span><span class="co">## 3                  0.0314                0.0139                     0.2382</span></span>
-<span><span class="co">## 4                  0.0309                0.0217                     0.0972</span></span>
-<span><span class="co">## 5                  0.0370                0.0230                     0.0798</span></span>
-<span><span class="co">## 6                  0.0378                0.0347                     0.0470</span></span>
-<span><span class="co">##   Colon_epithelial_cells Left_atrium Bladder Breast Head_and_neck_larynx Kidney</span></span>
-<span><span class="co">## 1                 0.0163      0.0386  0.0462 0.0264               0.0470 0.0269</span></span>
-<span><span class="co">## 2                 0.2037      0.2446  0.2054 0.1922               0.2045 0.1596</span></span>
-<span><span class="co">## 3                 0.0193      0.1134  0.1269 0.1651               0.1523 0.1034</span></span>
-<span><span class="co">## 4                 0.0187      0.0674  0.0769 0.0691               0.0704 0.0604</span></span>
-<span><span class="co">## 5                 0.0193      0.0432  0.0459 0.0228               0.0687 0.0234</span></span>
-<span><span class="co">## 6                 0.0193      0.0287  0.0246 0.0081               0.0098 0.0309</span></span>
-<span><span class="co">##   Prostate Thyroid Upper_GI Uterus_cervix</span></span>
-<span><span class="co">## 1   0.0353  0.0553   0.0701        0.0344</span></span>
-<span><span class="co">## 2   0.1557  0.1848   0.1680        0.2026</span></span>
-<span><span class="co">## 3   0.0686  0.0943   0.1298        0.1075</span></span>
-<span><span class="co">## 4   0.0369  0.0412   0.0924        0.0697</span></span>
-<span><span class="co">## 5   0.0508  0.0726   0.0759        0.0196</span></span>
-<span><span class="co">## 6   0.0055  0.0188   0.0090        0.0166</span></span></code></pre>
-</div>
-<div class="section level3">
-<h3 id="prepare-example-data">Prepare Example Data<a class="anchor" aria-label="anchor" href="#prepare-example-data"></a>
-</h3>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">minfiData</span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyr.tidyverse.org" class="external-link">tidyr</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>matrixStats.useNames.NA <span class="op">=</span> <span class="st">"deprecated"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Load example data</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">minfiData</span><span class="op">)</span></span>
 <span><span class="va">methyl_set</span> <span class="op">&lt;-</span> <span class="fu">minfiData</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/minfiData/man/MsetEx.html" class="external-link">MsetEx</a></span></span>
 <span><span class="va">beta_matrix</span> <span class="op">&lt;-</span> <span class="fu">minfi</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/minfi/man/MethylSet-class.html" class="external-link">getBeta</a></span><span class="op">(</span><span class="fu">minfi</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/minfi/man/ratioConvert-methods.html" class="external-link">ratioConvert</a></span><span class="op">(</span><span class="va">methyl_set</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p>All signature matrices follow a unified design - a
+<code>data.frame</code> with a <code>"CpGs"</code> column and cell types
+as additional columns:</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Get signature matrices</span></span>
+<span><span class="va">epidish_sig</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_epidish_signature_matrix.html">get_epidish_signature_matrix</a></span><span class="op">(</span><span class="st">"blood"</span><span class="op">)</span></span>
+<span><span class="va">houseman_sig</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_houseman_signature_matrix.html">get_houseman_signature_matrix</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">methatlas_sig</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_methatlas_signature_matrix.html">get_methatlas_signature_matrix</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">methylresolver_sig</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_methylresolver_signature_matrix.html">get_methylresolver_signature_matrix</a></span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Check structure</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"EpiDISH:"</span>, <span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">epidish_sig</span><span class="op">)</span>, <span class="st">"\n"</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## EpiDISH: 333 8</span></span></code></pre>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Houseman:"</span>, <span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">houseman_sig</span><span class="op">)</span>, <span class="st">"\n"</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## Houseman: 450 7</span></span></code></pre>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"MethAtlas:"</span>, <span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">methatlas_sig</span><span class="op">)</span>, <span class="st">"\n"</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## MethAtlas: 6105 26</span></span></code></pre>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"MethylResolver:"</span>, <span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">methylresolver_sig</span><span class="op">)</span>, <span class="st">"\n"</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## MethylResolver: 419 12</span></span></code></pre>
 </div>
+<div class="section level3">
+<h3 id="custom-cpg-subsets">Custom CpG Subsets<a class="anchor" aria-label="anchor" href="#custom-cpg-subsets"></a>
+</h3>
+<p>You can use custom CpG subsets for deconvolution:</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Get overlapping CpGs between methods</span></span>
+<span><span class="va">custom_cpgs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://generics.r-lib.org/reference/setops.html" class="external-link">intersect</a></span><span class="op">(</span><span class="va">epidish_sig</span><span class="op">$</span><span class="va">CpGs</span>, <span class="va">houseman_sig</span><span class="op">$</span><span class="va">CpGs</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Overlapping CpGs:"</span>, <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">custom_cpgs</span><span class="op">)</span>, <span class="st">"\n"</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## Overlapping CpGs: 13</span></span></code></pre>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Run with custom CpGs</span></span>
+<span><span class="va">result_custom</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/run_epidish.html">run_epidish</a></span><span class="op">(</span><span class="va">beta_matrix</span>, cpg_subset <span class="op">=</span> <span class="va">custom_cpgs</span><span class="op">)</span></span></code></pre></div>
 </div>
-<div class="section level2">
-<h2 id="example-using-custom-cpgs-from-epidish-and-houseman-signatures">Example: Using Custom CpGs from EpiDISH and Houseman signatures<a class="anchor" aria-label="anchor" href="#example-using-custom-cpgs-from-epidish-and-houseman-signatures"></a>
-</h2>
-<p>When using custom CpGs for deconvolution, it is important to ensure
-that the CpGs you select are present in the signature matrix for the
-method you are using. Here, we demonstrate this feature for EpiDISH and
-Houseman, as their signature matrices may have some overlap. For other
-methods, custom CpG support is available, but the overlap with
-EpiDISH/Houseman signatures may be zero, so we do not show those
-examples here.</p>
+<div class="section level3">
+<h3 id="cross-signature-deconvolution">Cross-Signature Deconvolution<a class="anchor" aria-label="anchor" href="#cross-signature-deconvolution"></a>
+</h3>
+<p>deconvMe supports <strong>cross-signature deconvolution</strong>,
+allowing you to use signature matrices from one method with the
+deconvolution algorithm of another method.</p>
+<div class="section level4">
+<h4 id="supported-methods">Supported Methods<a class="anchor" aria-label="anchor" href="#supported-methods"></a>
+</h4>
+<table class="table">
+<thead><tr class="header">
+<th>Method</th>
+<th>Cross-Signature Support</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td>EpiDISH</td>
+<td>✅ All methods</td>
+</tr>
+<tr class="even">
+<td>MethAtlas</td>
+<td>✅ All methods</td>
+</tr>
+<tr class="odd">
+<td>MethylResolver</td>
+<td>✅ All methods</td>
+</tr>
+<tr class="even">
+<td>Houseman</td>
+<td>❌ Not supported</td>
+</tr>
+<tr class="odd">
+<td>MethylCC</td>
+<td>❌ Not supported (no classical signature matrix)</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section level4">
+<h4 id="examples">Examples<a class="anchor" aria-label="anchor" href="#examples"></a>
+</h4>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Get CpGs from each method's signature matrix</span></span>
-<span><span class="va">cpgs_epidish</span> <span class="op">&lt;-</span> <span class="va">sig_epidish</span><span class="op">$</span><span class="va">CpGs</span></span>
-<span><span class="va">cpgs_houseman</span> <span class="op">&lt;-</span> <span class="va">sig_houseman</span><span class="op">$</span><span class="va">CpGs</span></span>
+<code class="sourceCode R"><span><span class="co"># EpiDISH with Houseman signature</span></span>
+<span><span class="va">result_epidish_houseman</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/run_epidish.html">run_epidish</a></span><span class="op">(</span><span class="va">beta_matrix</span>, reference <span class="op">=</span> <span class="va">houseman_sig</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Example: intersection of CpGs between EpiDISH and Houseman</span></span>
-<span><span class="va">custom_cpgs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://generics.r-lib.org/reference/setops.html" class="external-link">intersect</a></span><span class="op">(</span><span class="va">cpgs_epidish</span>, <span class="va">cpgs_houseman</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">custom_cpgs</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## [1] 13</span></span></code></pre>
-<div class="section level3">
-<h3 id="example-running-epidish-with-custom-cpgs">Example: Running EpiDISH with Custom CpGs<a class="anchor" aria-label="anchor" href="#example-running-epidish-with-custom-cpgs"></a>
-</h3>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Use the method-specific subset</span></span>
-<span><span class="va">result_custom_epidish</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/run_epidish.html">run_epidish</a></span><span class="op">(</span><span class="va">beta_matrix</span>, cpg_subset <span class="op">=</span> <span class="va">custom_cpgs</span><span class="op">)</span></span></code></pre></div>
+<span><span class="co"># MethAtlas with EpiDISH signature</span></span>
+<span><span class="va">result_methatlas_epidish</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/run_methatlas.html">run_methatlas</a></span><span class="op">(</span><span class="va">beta_matrix</span>, reference <span class="op">=</span> <span class="va">epidish_sig</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># MethylResolver with MethAtlas signature</span></span>
+<span><span class="va">result_mr_methatlas</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/run_methylresolver.html">run_methylresolver</a></span><span class="op">(</span></span>
+<span>  <span class="va">beta_matrix</span>, </span>
+<span>  reference <span class="op">=</span> <span class="va">methatlas_sig</span>,</span>
+<span>  alpha <span class="op">=</span> <span class="fl">1</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## Beginning LTS Deconvolution For This Mixture...</span></span>
+<span><span class="co">##   |                                                                              |                                                                      |   0%  |                                                                              |============                                                          |  17%  |                                                                              |=======================                                               |  33%  |                                                                              |===================================                                   |  50%  |                                                                              |===============================================                       |  67%  |                                                                              |==========================================================            |  83%  |                                                                              |======================================================================| 100%</span></span>
+<span><span class="co">## Completed LTS Deconvolution For This Mixture...</span></span></code></pre>
 </div>
-<div class="section level3">
-<h3 id="comparing-results-custom-cpgs-vs-full-signature">Comparing Results: Custom CpGs vs Full Signature<a class="anchor" aria-label="anchor" href="#comparing-results-custom-cpgs-vs-full-signature"></a>
-</h3>
-<p>You can compare the deconvolution results obtained using the custom
-CpGs to those obtained using the full EpiDISH signature matrix:</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Run EpiDISH with the full signature</span></span>
-<span><span class="va">result_full_epidish</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/run_epidish.html">run_epidish</a></span><span class="op">(</span><span class="va">beta_matrix</span><span class="op">)</span></span>
+<div class="section level4">
+<h4 id="comparing-results">Comparing Results<a class="anchor" aria-label="anchor" href="#comparing-results"></a>
+</h4>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Compare EpiDISH with different signatures</span></span>
+<span><span class="va">result_epidish_blood</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/run_epidish.html">run_epidish</a></span><span class="op">(</span><span class="va">beta_matrix</span>, reference <span class="op">=</span> <span class="st">"blood"</span><span class="op">)</span><span class="op">$</span><span class="va">estF</span></span>
+<span><span class="va">result_epidish_houseman</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/run_epidish.html">run_epidish</a></span><span class="op">(</span><span class="va">beta_matrix</span>, reference <span class="op">=</span> <span class="va">houseman_sig</span><span class="op">)</span><span class="op">$</span><span class="va">estF</span></span>
 <span></span>
+<span><span class="co"># Rename cell types to unified names</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">result_epidish_blood</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu">deconvMe</span><span class="fu">::</span><span class="fu"><a href="../reference/rename_cell_types.html">rename_cell_types</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">result_epidish_blood</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">result_epidish_houseman</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu">deconvMe</span><span class="fu">::</span><span class="fu"><a href="../reference/rename_cell_types.html">rename_cell_types</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">result_epidish_houseman</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Optionally, visualize the differences (e.g., for the first sample) using tidyverse</span></span>
-<span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"tidyr"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">&amp;&amp;</span> <span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"dplyr"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">&amp;&amp;</span> <span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"ggplot2"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
-<span>  <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyr.tidyverse.org" class="external-link">tidyr</a></span><span class="op">)</span></span>
-<span>  <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
-<span>  <span class="va">df_compare</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span></span>
-<span>    CellType <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">result_full_epidish</span><span class="op">$</span><span class="va">estF</span><span class="op">)</span>,</span>
-<span>    Full <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="va">result_full_epidish</span><span class="op">$</span><span class="va">estF</span><span class="op">[</span><span class="fl">1</span>,<span class="op">]</span><span class="op">)</span>,</span>
-<span>    Custom <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="va">result_custom_epidish</span><span class="op">$</span><span class="va">estF</span><span class="op">[</span><span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">result_custom_epidish</span><span class="op">$</span><span class="va">estF</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
-<span>  <span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>    <span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html" class="external-link">pivot_longer</a></span><span class="op">(</span>cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">Full</span>, <span class="va">Custom</span><span class="op">)</span>, names_to <span class="op">=</span> <span class="st">"Signature"</span>, values_to <span class="op">=</span> <span class="st">"Fraction"</span><span class="op">)</span></span>
-<span>  </span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">df_compare</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">CellType</span>, y <span class="op">=</span> <span class="va">Fraction</span>, fill <span class="op">=</span> <span class="va">Signature</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html" class="external-link">geom_bar</a></span><span class="op">(</span>stat <span class="op">=</span> <span class="st">"identity"</span>, position <span class="op">=</span> <span class="st">"dodge"</span><span class="op">)</span> <span class="op">+</span></span>
-<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"EpiDISH: Full vs Custom CpGs (Sample 1)"</span>, y <span class="op">=</span> <span class="st">"Estimated Fraction"</span><span class="op">)</span> <span class="op">+</span></span>
-<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html" class="external-link">scale_fill_manual</a></span><span class="op">(</span>values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Full"</span> <span class="op">=</span> <span class="st">"bisque"</span>, <span class="st">"Custom"</span> <span class="op">=</span> <span class="st">"darkgreen"</span><span class="op">)</span><span class="op">)</span><span class="op">+</span></span>
-<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_minimal</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="op">}</span></span></code></pre></div>
-<p><img src="signatures_files/figure-html/unnamed-chunk-10-1.png" width="768"></p>
-<hr>
-<p>For more details on the available arguments and customization
-options, see the function documentation or the source code in the
-<code>R/</code> directory.</p>
+<span><span class="va">result_epidish_blood_long</span> <span class="op">&lt;-</span> <span class="va">result_epidish_blood</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/rownames.html" class="external-link">rownames_to_column</a></span><span class="op">(</span><span class="st">'sample'</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">tidyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html" class="external-link">pivot_longer</a></span><span class="op">(</span><span class="op">-</span><span class="va">sample</span>, names_to <span class="op">=</span> <span class="st">'celltype'</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span><span class="st">'method'</span><span class="op">=</span><span class="st">'EpiDISH'</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">result_epidish_houseman_long</span> <span class="op">&lt;-</span> <span class="va">result_epidish_houseman</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/rownames.html" class="external-link">rownames_to_column</a></span><span class="op">(</span><span class="st">'sample'</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">tidyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html" class="external-link">pivot_longer</a></span><span class="op">(</span><span class="op">-</span><span class="va">sample</span>, names_to <span class="op">=</span> <span class="st">'celltype'</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span><span class="st">'method'</span><span class="op">=</span><span class="st">'Houseman'</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">results</span> <span class="op">&lt;-</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind_rows.html" class="external-link">bind_rows</a></span><span class="op">(</span><span class="va">result_epidish_blood_long</span>, <span class="va">result_epidish_houseman_long</span><span class="op">)</span> </span>
+<span></span>
+<span><span class="fu">deconvMe</span><span class="fu">::</span><span class="fu"><a href="../reference/results_aggregated_boxplot.html">results_aggregated_boxplot</a></span><span class="op">(</span><span class="va">results</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="st">"signature"</span><span class="op">)</span><span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">ggtitle</a></span><span class="op">(</span><span class="st">'Deconvolution with EpiDISH, with two different signatures'</span><span class="op">)</span></span></code></pre></div>
+<p><img src="signatures_files/figure-html/unnamed-chunk-5-1.png" width="768"></p>
+</div>
 </div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
