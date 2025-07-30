@@ -36,6 +36,7 @@
 <li><a class="dropdown-item" href="../articles/getting_started.html">Getting Started</a></li>
     <li><a class="dropdown-item" href="../articles/visualization.html">Visualization</a></li>
     <li><a class="dropdown-item" href="../articles/signatures.html">Signature Matrices &amp; Custom CpGs</a></li>
+    <li><a class="dropdown-item" href="../articles/combined_methods.html">Combined Methods Approach</a></li>
     <li><a class="dropdown-item" href="../articles/contribute.html">Contribute</a></li>
   </ul>
 </li>
@@ -202,6 +203,69 @@ samples</caption>
 <p>For more details, see the package documentation and other
 vignettes!</p>
 </div>
+</div>
+<div class="section level2">
+<h2 id="overview-of-included-methods">Overview of Included Methods<a class="anchor" aria-label="anchor" href="#overview-of-included-methods"></a>
+</h2>
+<p>Below is a template table summarizing the deconvolution methods
+included in deconvMe. This table lists each method, the type of
+algorithm it uses, the intended tissue types, and the type of data used
+to build the internal deconvolution reference.</p>
+<table class="table">
+<colgroup>
+<col width="12%">
+<col width="20%">
+<col width="23%">
+<col width="44%">
+</colgroup>
+<thead><tr class="header">
+<th align="left">Name</th>
+<th align="left">Algorithm Type(s)</th>
+<th align="left">Intended Tissue Type(s)</th>
+<th align="left">Reference Source Data</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">EpiDISH</td>
+<td align="left">Robust Partial Correlations (RPC), Constrained
+Projection (CP), Support Vector Regression (SVR)</td>
+<td align="left">Blood, Epithelial, Breast</td>
+<td align="left">purified blood, epithelial, and non-epithelial data,
+extended with DNAse Hypersensitivity Sites from Roadmap and ENCODE</td>
+</tr>
+<tr class="even">
+<td align="left">Houseman</td>
+<td align="left">Constrained projection/Quadratic Programming
+(CP/QP)</td>
+<td align="left">Blood</td>
+<td align="left">Purified blood cell methylation profiles
+(IDOL-optimized)</td>
+</tr>
+<tr class="odd">
+<td align="left">MethylCC</td>
+<td align="left">Constrained Linear model based on DMRs</td>
+<td align="left">Blood (in deconvMe, can be extended to other
+tissues)</td>
+<td align="left">purified blood</td>
+</tr>
+<tr class="even">
+<td align="left">MethylResolver</td>
+<td align="left">Least Trimmed Squares (LTS) regression</td>
+<td align="left">Blood, cancer</td>
+<td align="left">Purified blood methylation profiles (IDOL-optimized),
+extended with additional leukocytes</td>
+</tr>
+<tr class="odd">
+<td align="left">MethAtlas</td>
+<td align="left">non-negative least squares (NNLS)</td>
+<td align="left">Blood, immune, tissue-wide</td>
+<td align="left">Comprehensive atlas of purified tissue and immune cell
+methylomes</td>
+</tr>
+</tbody>
+</table>
+<p><em>This table can be expanded as new methods are added to the
+package.</em></p>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

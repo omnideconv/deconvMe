@@ -36,6 +36,7 @@
 <li><a class="dropdown-item" href="../articles/getting_started.html">Getting Started</a></li>
     <li><a class="dropdown-item" href="../articles/visualization.html">Visualization</a></li>
     <li><a class="dropdown-item" href="../articles/signatures.html">Signature Matrices &amp; Custom CpGs</a></li>
+    <li><a class="dropdown-item" href="../articles/combined_methods.html">Combined Methods Approach</a></li>
     <li><a class="dropdown-item" href="../articles/contribute.html">Contribute</a></li>
   </ul>
 </li>
@@ -69,21 +70,59 @@
     
     
 <div class="section level2">
-<h2 id="background-what-are-signature-matrices">Background: What Are Signature Matrices?<a class="anchor" aria-label="anchor" href="#background-what-are-signature-matrices"></a>
+<h2 id="background-reference-based-vs-reference-free-deconvolution">Background: Reference-Based vs Reference-Free Deconvolution<a class="anchor" aria-label="anchor" href="#background-reference-based-vs-reference-free-deconvolution"></a>
 </h2>
-<p>Cell-type deconvolution methods rely on <em>signature matrices</em>
-(also called reference matrices or basis matrices) to estimate the
-proportions of different cell types in a heterogeneous DNA methylation
-sample. A signature matrix is a table where each row corresponds to a
-CpG site (or region), and each column corresponds to a cell type. The
-entries represent the expected methylation value (often as beta values)
-for each CpG in each pure cell type.</p>
+<p>Cell-type deconvolution methods can be broadly categorized into two
+main approaches:</p>
+<div class="section level3">
+<h3 id="reference-based-methods">Reference-Based Methods<a class="anchor" aria-label="anchor" href="#reference-based-methods"></a>
+</h3>
+<p>Reference-based methods rely on <em>signature matrices</em> (also
+called reference matrices or basis matrices) to estimate the proportions
+of different cell types in a heterogeneous DNA methylation sample. A
+signature matrix is a table where each row corresponds to a CpG site (or
+region), and each column corresponds to a cell type. The entries
+represent the expected methylation value (often as beta values) for each
+CpG in each pure cell type.</p>
 <p>Signature matrices are typically constructed from reference datasets
 where DNA methylation has been measured in sorted or purified cell
 populations. The choice of CpGs and the quality of the reference data
-are critical for accurate deconvolution. Different methods use different
-strategies for selecting CpGs and constructing their signature
-matrices:</p>
+are critical for accurate deconvolution.</p>
+</div>
+<div class="section level3">
+<h3 id="reference-free-methods">Reference-Free Methods<a class="anchor" aria-label="anchor" href="#reference-free-methods"></a>
+</h3>
+<p>Reference-free methods attempt to deconvolve cell-type proportions
+without requiring prior knowledge of cell-type-specific methylation
+signatures. These methods use computational approaches such as
+non-negative matrix factorization (NMF) or independent component
+analysis (ICA) to identify latent cell-type components directly from the
+mixed methylation data.</p>
+</div>
+<div class="section level3">
+<h3 id="why-deconvme-focuses-on-reference-based-methods">Why deconvMe Focuses on Reference-Based Methods<a class="anchor" aria-label="anchor" href="#why-deconvme-focuses-on-reference-based-methods"></a>
+</h3>
+<p>deconvMe exclusively implements reference-based deconvolution methods
+because they generally provide <strong>better performance and more
+reliable results</strong> compared to reference-free approaches.
+Reference-based methods offer several advantages:</p>
+<ul>
+<li>
+<strong>Higher accuracy</strong>: Pre-defined signature matrices
+based on purified cell populations provide more reliable cell-type
+identification</li>
+<li>
+<strong>Better interpretability</strong>: Results can be directly
+mapped to known cell types with biological meaning</li>
+<li>
+<strong>Consistent results</strong>: The same signature matrix
+applied to different datasets produces comparable results</li>
+<li>
+<strong>Validation capability</strong>: Results can be validated
+against known cell-type proportions when available</li>
+</ul>
+<p>Different reference-based methods use different strategies for
+selecting CpGs and constructing their signature matrices:</p>
 <ul>
 <li>
 <strong>EpiDISH</strong> uses reference matrices for blood, breast,
@@ -107,6 +146,7 @@ cell types present in your samples. In some cases, you may want to use a
 custom set of CpGs (for example, to focus on a subset relevant to your
 study or to match the coverage of your data).</p>
 </div>
+</div>
 <div class="section level2">
 <h2 id="accessing-signature-matrices">Accessing Signature Matrices<a class="anchor" aria-label="anchor" href="#accessing-signature-matrices"></a>
 </h2>
@@ -114,7 +154,8 @@ study or to match the coverage of your data).</p>
 each deconvolution method. These matrices define the reference
 methylation profiles for each cell type.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/omnideconv/deconvMe" class="external-link">deconvMe</a></span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/omnideconv/deconvMe" class="external-link">deconvMe</a></span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>matrixStats.useNames.NA <span class="op">=</span> <span class="st">"deprecated"</span><span class="op">)</span></span></code></pre></div>
 <div class="section level3">
 <h3 id="epidish">EpiDISH<a class="anchor" aria-label="anchor" href="#epidish"></a>
 </h3>
